@@ -1,0 +1,29 @@
+{
+  "copy": "わり算アプリ_小3算数_わり算のいみ.html",
+  "states": [
+    ["1 はじめ", "window.__instant=true; setMode('mite'); goStage(0)"],
+    ["1 3こ くばった", "window.__instant=true; setMode('mite'); goStage(0); dealOne(); dealOne(); dealOne()"],
+    ["1 できた", "window.__instant=true; setMode('mite'); goStage(0); dealAll()"],
+    ["2 はじめ", "window.__instant=true; setMode('mite'); goStage(1)"],
+    ["2 できた", "window.__instant=true; setMode('mite'); goStage(1); takeGroup(); takeGroup(); takeGroup(); takeGroup()"],
+    ["3 はじめ", "window.__instant=true; setMode('mite'); goStage(2)"],
+    ["3 まちがい", "window.__instant=true; setMode('mite'); goStage(2); pick(0,'nin',document.querySelectorAll('#cmp0 .pick button')[1])"],
+    ["3 できた", "window.__instant=true; setMode('mite'); goStage(2); pick(0,'ko',document.querySelectorAll('#cmp0 .pick button')[0]); pick(1,'nin',document.querySelectorAll('#cmp1 .pick button')[1])"],
+    ["4 はじめ", "window.__instant=true; setMode('mite'); goStage(3)"],
+    ["4 3×2", "window.__instant=true; setMode('mite'); goStage(3); light(2,document.querySelectorAll('#strip button')[1])"],
+    ["4 できた", "window.__instant=true; setMode('mite'); goStage(3); light(4,document.querySelectorAll('#strip button')[3])"],
+    ["5 はじめ", "window.__instant=true; setMode('mite'); goStage(4)"],
+    ["5 できた あまり2", "window.__instant=true; setMode('mite'); goStage(4); dealAll()"],
+    ["5 あまりなし", "window.__instant=true; setMode('mite'); P[5].a=12; goStage(4); dealAll(); P[5].a=14"],
+    ["5 20こ 2人", "window.__instant=true; setMode('mite'); P[5].a=20; P[5].b=2; goStage(4); dealAll(); P[5].a=14; P[5].b=3"],
+    ["1 20こ 5人", "window.__instant=true; setMode('mite'); P[1].a=20; P[1].b=5; goStage(0); dealAll(); P[1].a=12; P[1].b=3"],
+    ["3 20こ 4人", "window.__instant=true; setMode('mite'); P[1].a=20; P[1].b=4; goStage(2); P[1].a=12; P[1].b=3"],
+    ["じ1 しき", "window.__instant=true; setMode('jibun'); goStage(0)"],
+    ["じ1 まちがい", "window.__instant=true; setMode('jibun'); goStage(0); putTile(3); putTile(12)"],
+    ["じ1 こたえ", "window.__instant=true; setMode('jibun'); goStage(0); putTile(12); putTile(3); dealAll()"],
+    ["じ1 できた", "window.__instant=true; setMode('jibun'); goStage(0); putTile(12); putTile(3); dealAll(); putAns(4); putUnit('こ')"],
+    ["じ2 こたえ", "window.__instant=true; setMode('jibun'); goStage(1); putTile(12); putTile(3); takeGroup(); takeGroup(); takeGroup(); takeGroup()"],
+    ["じ5 こたえ", "window.__instant=true; setMode('jibun'); goStage(4); putTile(14); putTile(3); dealAll()"],
+    ["じ5 できた", "window.__instant=true; setMode('jibun'); goStage(4); putTile(14); putTile(3); dealAll(); putAns(4); putAns(2); setMode('mite')"]
+  ]
+}

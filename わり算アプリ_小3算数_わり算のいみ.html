@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>わり算ってなに？｜3年わり算アプリ</title>
+<meta name="description" content="小学3年わり算のいみ（同じ数ずつ・○こずつ・かけ算とのかんけい・あまり）を、クッキーをくばりながらつかむアプリ">
+<meta property="og:title" content="わり算ってなに？｜3年わり算アプリ">
+<meta property="og:description" content="クッキーをくばって、わり算のいみをつかもう">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  [hidden]{display:none !important}
+  :root{
+    --cookie:#c9651a; --cookie-l:#fdf0e3; --plate:#1f7fc4; --plate-l:#e6f2fc;   /* 文字色は白地で明暗比3.5以上 */
+    --pink:#ffd1e3; --pink-d:#ff8fb8; --green:#cdeeb6; --green-d:#6cc257;
+    --yellow:#fff0a8; --yellow-d:#ffd24d; --purple:#e3d4ff; --purple-d:#a97ff5;
+    --ink:#4a3f3a; --ink-l:#8a7c76; --paper:#fffaf3;
+    --shadow:0 5px 0 rgba(0,0,0,.08), 0 10px 22px rgba(0,0,0,.08);
+    --font-head:"Zen Maru Gothic","Rounded Mplus 1c","Hiragino Maru Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+    --font-body:"UD Digi Kyokasho NK-R","UD デジタル 教科書体 NK-R","Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:var(--font-head);color:var(--ink);font-weight:700;
+    background:
+      radial-gradient(circle at 10% 16%, #fff1c9 0 70px, transparent 71px),
+      radial-gradient(circle at 90% 10%, #d9efff 0 70px, transparent 71px),
+      radial-gradient(circle at 82% 90%, #ffe3ee 0 90px, transparent 91px),
+      linear-gradient(160deg,#fffaf3,#eef8ff);
+    display:flex;flex-direction:column;overflow:hidden;
+    user-select:none;-webkit-user-select:none;touch-action:manipulation;
+  }
+  b,strong{font-weight:900}
+  button{font-family:inherit;font-weight:700;color:var(--ink);cursor:pointer;border:none;background:#fff}
+  button:disabled{opacity:.4;cursor:default}
+  .c-cookie{color:var(--cookie)} .c-plate{color:var(--plate)}
+
+  /* ---- header ---- */
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px 4px;flex:0 0 auto}
+  header h1{font-size:clamp(17px,2.3vw,24px);letter-spacing:.5px;text-align:center;flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  header h1 small{font-size:.62em;color:var(--ink-l);margin-left:8px;font-weight:700}
+  .hbtn{border-radius:999px;padding:8px 14px;font-size:15px;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px;min-height:36px;white-space:nowrap}
+  .hbtn:active{transform:translateY(3px)}
+  .hbtn svg{width:18px;height:18px}
+
+  /* ---- step band ---- */
+  nav.band{display:flex;gap:8px;padding:4px 14px 8px;flex:0 0 auto;justify-content:center;flex-wrap:wrap}
+  nav.band button{
+    font-size:clamp(13px,1.5vw,17px);padding:8px 14px;border-radius:16px 16px 6px 6px;
+    box-shadow:var(--shadow);opacity:.66;display:flex;align-items:center;gap:6px;transition:transform .1s,opacity .15s;min-height:36px
+  }
+  nav.band button .no{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px}
+  nav.band button .no.done{background:#3a8f3a}   /* できた段は 番号が緑になる */
+  nav.band button.on{opacity:1;transform:translateY(2px) scale(1.04)}
+  nav.band button.st1.on{background:var(--pink)} nav.band button.st2.on{background:var(--plate-l)}
+  nav.band button.st3.on{background:var(--green)} nav.band button.st4.on{background:var(--yellow)} nav.band button.st5.on{background:var(--purple)}
+
+  /* ---- main ---- */
+  main{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(300px,30%,380px);gap:12px;padding:0 14px 12px}
+  .figwrap{min-width:0;min-height:0;display:flex;align-items:center;justify-content:center}
+  .figbox{
+    width:100%;max-height:100%;aspect-ratio:1000/620;background:rgba(255,255,255,.82);border-radius:26px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex
+  }
+  .figbox svg{width:100%;height:100%;display:block;font-family:var(--font-head);font-weight:900}
+  .side{min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+
+  .qcard{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:12px 14px;font-family:var(--font-body);font-weight:700;font-size:clamp(16px,1.4vw,19px);line-height:1.75;text-align:center;text-wrap:pretty}
+  .qcard b{font-family:var(--font-head);font-size:1.15em}
+  .qcard .ctl{display:flex;justify-content:center;align-items:center;gap:4px 8px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:2px dashed #f0e6dc;font-family:var(--font-head);line-height:1.2}
+  .qcard .ctl .u{font-size:12px;color:var(--ink-l);white-space:nowrap} .qcard .ctl .sep{width:0;height:24px;border-left:2px solid #e5dcd3}
+  .qcard .ctl .cg{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+  .numctl{display:inline-flex;align-items:center;vertical-align:middle;gap:1px;background:var(--paper);border-radius:14px;padding:0 1px}
+  .numctl .num{font-family:var(--font-head);font-size:22px;min-width:1.2em;text-align:center;line-height:1.1}
+  .pm{width:32px;height:32px;border-radius:10px;font-size:20px;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.10);line-height:1}
+  .pm:active{transform:translateY(2px)}
+
+  .status{text-align:center;font-size:clamp(16px,1.5vw,20px);min-height:1.5em;line-height:1.5;text-wrap:pretty}
+  .btnrow{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .go{font-size:clamp(18px,1.8vw,24px);padding:12px 26px;border-radius:18px;color:#fff;background:var(--cookie);box-shadow:0 5px 0 rgba(0,0,0,.15);min-height:48px}
+  .go.blue{background:var(--plate)} .go.sub{background:#fff;color:var(--ink);font-size:15px;padding:10px 14px;min-height:40px}
+  .go:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.15)}
+  .go:disabled{transform:none}
+
+  /* 式カード */
+  .eq{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:10px 12px 8px;animation:rise .4s backwards}
+  .eqrow{display:flex;align-items:flex-start;justify-content:center;gap:6px;flex-wrap:wrap;row-gap:8px}
+  .grp{display:flex;align-items:flex-start;gap:6px}
+  .amari{white-space:nowrap}
+  .chip{display:flex;flex-direction:column;align-items:center;min-width:2.2em;padding:4px 8px 2px;border-radius:14px;background:var(--paper);border:3px solid #eee;font-size:clamp(26px,2.4vw,34px);line-height:1;cursor:pointer}
+  .chip small{font-size:12px;line-height:1.2;margin-top:3px;color:var(--ink-l);font-weight:700;white-space:nowrap}
+  .chip.c-cookie{border-color:var(--cookie);background:var(--cookie-l)} .chip.c-plate{border-color:var(--plate);background:var(--plate-l)}
+  .chip.c-cookie small{color:var(--cookie)} .chip.c-plate small{color:var(--plate)}
+  .chip.blank{color:var(--ink-l);border-style:dashed}
+  .chip:active{transform:scale(.96)}
+  .op{font-size:clamp(24px,2.2vw,30px);line-height:1;padding-top:8px;color:var(--ink-l)}
+  .amari{font-size:16px;padding-top:12px;color:var(--ink-l)}
+  .read{text-align:center;font-size:15px;color:var(--ink-l);margin-top:6px}
+  .msg{text-align:center;font-family:var(--font-body);font-weight:700;font-size:clamp(15px,1.3vw,17px);line-height:1.6;min-height:1.6em;text-wrap:pretty}
+  .msg.warn{color:#d04a4a}
+  .nextrow{display:flex;justify-content:center}
+  .next{font-size:clamp(18px,1.8vw,22px);padding:12px 30px;border-radius:18px;color:#fff;background:#3a8f3a;box-shadow:0 5px 0 rgba(0,0,0,.15);min-height:48px;animation:rise .4s backwards}
+  .next:active{transform:translateY(4px)}
+
+  /* くらべる */
+  .cmp{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .cmp .cap{font-size:16px}
+  .cmp .eqrow .chip{font-size:24px;min-width:1.8em;padding:3px 7px 2px;cursor:default}
+  .cmp .pick{display:flex;gap:10px}
+  .cmp .pick button{font-size:20px;padding:8px 18px;border-radius:14px;box-shadow:0 3px 0 rgba(0,0,0,.12);min-height:40px;background:var(--paper);border:3px solid #eee}
+  .cmp .pick button.hit{background:var(--green);border-color:var(--green-d)}
+  .cmp .pick button.miss{animation:shake .4s}
+  .cmp .pick button:active{transform:translateY(2px)}
+
+  /* かけ算の だん */
+  .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .strip button{font-size:clamp(15px,1.3vw,18px);padding:6px 4px;border-radius:12px;box-shadow:0 3px 0 rgba(0,0,0,.10);min-height:36px;border:3px solid #fff}
+  .strip button.on{background:var(--yellow);border-color:var(--yellow-d)}
+  .strip button.hit{background:var(--green);border-color:var(--green-d)}
+  .strip button:active{transform:translateY(2px)}
+
+  /* みてわかる／じぶんでわかる の切り替え */
+  .seg{display:flex;background:#fff;border-radius:999px;box-shadow:var(--shadow);padding:3px;gap:2px;flex:0 0 auto}
+  .seg button{border-radius:999px;padding:5px 12px;font-size:14px;opacity:.55;min-height:32px;white-space:nowrap}
+  .seg button.on{background:var(--yellow);opacity:1}
+  /* じぶんでわかる：しきを作る・答えを入れる */
+  .tiles{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+  .tile{min-width:44px;height:40px;border-radius:12px;font-size:20px;box-shadow:0 3px 0 rgba(0,0,0,.10);background:var(--paper);border:2px solid #eee;padding:0 10px}
+  .tile:active{transform:translateY(2px)} .tile:disabled{opacity:.25}
+  .keypad .tile{min-width:40px;padding:0 6px} .units .tile{min-width:56px}
+  .chip.slot{border-style:dashed;color:var(--ink-l);background:#fff}
+  .chip.slot.filled{border-style:solid;color:var(--ink);border-color:#cfc6bf}
+  #bRow.miss{animation:shake .4s}
+
+  @keyframes rise{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+  .ck .in{transform-box:fill-box;transform-origin:center}
+  .ck.pulse .in{animation:pulse .7s ease-in-out 2}
+  .person .in{transform-box:fill-box;transform-origin:center}
+  .person.pulse .in{animation:pulse .7s ease-in-out 2}
+  #persons.shake{animation:shake .5s}
+  .dim{opacity:.22}
+
+  /* ---- 1カラム（タブレット縦・スマホ） ---- */
+  @media (max-width:900px){
+    html,body{height:auto;min-height:100%}
+    body{overflow:auto}
+    main{grid-template-columns:1fr;grid-template-rows:auto auto;padding:0 10px 12px;flex:none}
+    .side{overflow:visible}   /* 1カラムでは 縦にのびて ページごと スクロール（切れない） */
+    .figbox{max-height:40vh;width:auto;max-width:100%}
+    .figwrap{max-height:40vh}
+    header{padding:6px 10px 2px}
+    header h1 small{display:none}
+  }
+  @media (max-width:640px){
+    header{flex-wrap:wrap;justify-content:center;row-gap:6px}
+    header h1{flex:1 1 100%;order:-1}
+  }
+  @media (max-width:520px){
+    header h1{font-size:16px}
+    .seg button{padding:5px 9px;font-size:13px}
+    nav.band button{padding:6px 8px;font-size:12px;gap:3px}
+    nav.band button .no{width:18px;height:18px;font-size:11px}
+    .hbtn{padding:6px 10px;font-size:13px}
+  }
+  @media (max-height:820px) and (min-width:901px){
+    header{padding:6px 16px 2px} nav.band{padding:2px 14px 6px}
+    .side{gap:6px} .qcard{padding:8px 12px;line-height:1.6} .eq{padding:8px 10px 6px} .chip{font-size:28px}
+    .msg{line-height:1.5} .strip{gap:5px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <button id="navBackBtn" class="hbtn" onclick="goBack()">← もどる</button>
+  <h1>わり算ってなに？<small>3年わり算アプリ</small></h1>
+  <div class="seg" id="seg"><button data-m="mite" onclick="setMode('mite')">みてわかる</button><button data-m="jibun" onclick="setMode('jibun')">じぶんでわかる</button></div>
+  <button id="soundBtn" class="hbtn" onclick="toggleSound()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path id="sndWave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span id="sndLab">おと ON</span></button>
+</header>
+<nav class="band" id="band"></nav>
+<main>
+  <div class="figwrap"><div class="figbox">
+    <svg id="fig" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet" aria-label="クッキーをくばる図">
+      <g id="tray"></g>
+      <g id="persons"></g>
+      <g id="cookies"></g>
+      <g id="bubbles"></g>
+      <g id="overlay"></g>
+    </svg>
+  </div></div>
+  <aside class="side">
+    <div class="qcard" id="qcard"></div>
+    <div class="status" id="status"></div>
+    <div class="btnrow" id="btnrow"></div>
+    <div class="strip" id="strip" hidden></div>
+    <div id="choices" hidden></div>
+    <div class="eq" id="eq" hidden></div>
+    <div class="msg" id="msg"></div>
+    <div class="nextrow" id="nextrow" hidden><button class="next" id="nextBtn" onclick="nextStage()">つぎへ ▶</button></div>
+  </aside>
+</main>
+
+<script>
+/* =========================================================
+   わり算ってなに？  ― クッキーをくばってわり算のいみをつかむ
+   色のやくそく：クッキーの数＝だいだい / 人の数＝あお（図・しき・ことば全部同じ）
+   ========================================================= */
+const NS='http://www.w3.org/2000/svg';
+const COL={cookie:'#f0a850',cookieD:'#c9772a',choc:'#6b3e22',plate:'#3b9fe0',plateL:'#bfe6ff',plateT:'#1f7fc4',tray:'#f3dcb8',trayD:'#d3a86f',skin:'#ffe0c2',skinD:'#d9a37a',ink:'#4a3f3a',amber:'#c9651a'};   // amber/plateT＝文字用（CSSの --cookie/--plate と同じ）
+const HAIR=['#5a3a2a','#e0b34a','#8a5a3a','#3a3a5a','#c05a4a'];
+const SHIRT=['#ffd1e3','#bfe6ff','#cdeeb6','#fff0a8','#e3d4ff'];
+const STAGES=[
+  {n:1,label:'同じ数ずつ',cls:'st1'},
+  {n:2,label:'○こずつ',cls:'st2'},
+  {n:3,label:'くらべる',cls:'st3'},
+  {n:4,label:'かけ算',cls:'st4'},
+  {n:5,label:'あまり',cls:'st5'}];
+const P={1:{a:12,b:3},2:{a:12,k:3},5:{a:14,b:3}};   // 各段の数（±で変えられる）
+const S={stage:0,cookies:[],dealt:0,persons:0,done:false,failed:false,lit:0,ans:[null,null],cleared:[false,false,false,false,false],busy:false};
+const LMAIN={faceY:318,plateY:540};
+const TRAY={x:60,y:20,w:880,h:180};
+
+const $=id=>document.getElementById(id);
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function clear(g){while(g.firstChild)g.removeChild(g.firstChild);}
+
+/* ---------- 音 ---------- */
+let AC=null,sound=true;
+try{sound=localStorage.getItem('warizan-sound')!=='off';}catch(e){}
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function blip(f,d,type,vol){if(!sound)return;const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.value=vol||.12;o.connect(g);g.connect(c.destination);const t=c.currentTime;o.start(t);g.gain.setValueAtTime(vol||.12,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.stop(t+d);}
+function sfxDeal(){blip(720,.07);} function sfxLand(){blip(980,.06,'triangle',.08);}
+function sfxDone(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>blip(f,.18,'triangle',.14),i*110));}
+function sfxWrong(){blip(180,.25,'sawtooth',.08);}
+function toggleSound(){sound=!sound;try{localStorage.setItem('warizan-sound',sound?'on':'off');}catch(e){}syncSound();}
+function syncSound(){$('sndLab').textContent=sound?'おと ON':'おと OFF';$('sndWave').style.opacity=sound?'1':'.2';}
+
+/* ---------- モード：みてわかる（しきは出る）／じぶんでわかる（しきと答えを自分で入れる） ---------- */
+let MODE='mite';try{MODE=localStorage.getItem('warizan-mode')==='jibun'?'jibun':'mite';}catch(e){}
+function setMode(m){MODE=m==='jibun'?'jibun':'mite';try{localStorage.setItem('warizan-mode',MODE);}catch(e){}syncMode();goStage(S.stage);}
+function syncMode(){document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.m===MODE));}
+const jibun=()=>MODE==='jibun';
+let J={phase:'',slots:[null,null],ans:[null,null],unit:null,kind:''};   // kind: deal / group / amari
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function jNums(){const k=J.kind;return k==='group'?{a:G.a,b:G.k}:{a:D.a,b:D.b};}
+function startShiki(kind){
+  J={phase:'shiki',slots:[null,null],ans:[null,null],unit:null,kind};
+  const {a,b}=jNums(),q=Math.floor(a/b);
+  const tiles=shuffle([a,b,q,a+b].filter((v,i,arr)=>arr.indexOf(v)===i));
+  setStatus('しきを作ろう');setButtons([]);
+  const el=$('eq');el.hidden=false;
+  el.innerHTML=`<div class="eqrow" id="bRow"><span class="chip slot" onclick="clearSlot(0)">□</span><span class="op">÷</span><span class="chip slot" onclick="clearSlot(1)">□</span><span class="op">=</span><span class="chip blank">？</span></div><div class="tiles">${tiles.map(v=>`<button class="tile" onclick="putTile(${v},this)">${v}</button>`).join('')}</div>`;
+  setMsg('数字をおして、□に入れよう');
+}
+function tileBtn(v){return [...document.querySelectorAll('#eq .tiles .tile')].find(t=>+t.textContent===v&&!t.disabled);}
+function putTile(v,btn){
+  if(J.phase!=='shiki')return;btn=btn||tileBtn(v);if(!btn)return;
+  const i=J.slots[0]===null?0:(J.slots[1]===null?1:-1);if(i<0)return;
+  J.slots[i]=v;btn.disabled=true;btn.dataset.slot=i;renderSlots();sfxDeal();updateBack();
+  if(J.slots[0]!==null&&J.slots[1]!==null)checkShiki();
+}
+function clearSlot(i){
+  if(J.phase!=='shiki'||J.slots[i]===null)return;
+  J.slots[i]=null;document.querySelectorAll('#eq .tile').forEach(t=>{if(t.dataset.slot===String(i)){t.disabled=false;delete t.dataset.slot;}});renderSlots();
+}
+function resetTiles(){J.slots=[null,null];document.querySelectorAll('#eq .tile').forEach(t=>{t.disabled=false;delete t.dataset.slot;});renderSlots();}
+function renderSlots(){document.querySelectorAll('#bRow .slot').forEach((e,i)=>{e.textContent=J.slots[i]===null?'□':J.slots[i];e.classList.toggle('filled',J.slots[i]!==null);});}
+function checkShiki(){
+  const {a,b}=jNums(),[x,y]=J.slots,k=J.kind;
+  if(x===a&&y===b){
+    J.phase='deal';sfxLand();
+    const s=$('bRow').querySelectorAll('.slot');s[0].classList.add('c-cookie');s[1].classList.add(k==='group'?'c-cookie':'c-plate');
+    const t=$('eq').querySelector('.tiles');if(t)t.remove();
+    setStatus(`○ ${a}÷${b}。くばってたしかめよう`);setMsg('');
+    if(k==='group')setButtons([{text:`${b}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
+    return;
+  }
+  sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
+  let h='図を見て、もういちど';
+  if(x===b&&y===a)h='分けるもの（クッキーぜんぶの数）が先だよ';
+  else if(x===a)h=k==='group'?`${b}こずつだから、わる数は${b}`:`${b}人で分けるから、わる数は${b}`;
+  else if(y===b)h=`クッキーはぜんぶで${a}こ。わられる数は${a}`;
+  setMsg(h,true);
+  later(resetTiles,700);
+}
+function startKotae(kind){
+  J.phase='kotae';J.kind=kind;J.ans=[null,null];J.unit=null;
+  const {a,b}=jNums();
+  const slots=kind==='amari'
+    ?`<span class="chip slot ans" onclick="clearAns(0)">□<small>1人分</small></span><span class="grp"><span class="amari">あまり</span><span class="chip slot ans" onclick="clearAns(1)">□<small>あまり</small></span></span>`
+    :`<span class="chip slot ans" onclick="clearAns(0)">□</span><span class="chip slot unit" onclick="clearUnit()">□</span>`;
+  const el=$('eq');el.hidden=false;
+  el.innerHTML=`<div class="eqrow" id="bRow">${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,kind==='group'?'c-cookie':'c-plate',kind==='group'?'1人分':'人')}<span class="op">=</span>${slots}</div>`+
+    `<div class="tiles keypad">${[0,1,2,3,4,5,6,7,8,9,10].map(v=>`<button class="tile" onclick="putAns(${v})">${v}</button>`).join('')}</div>`+
+    (kind==='amari'?'':`<div class="tiles units"><button class="tile" onclick="putUnit('こ')">こ</button><button class="tile" onclick="putUnit('人')">人</button></div>`);
+  setStatus(kind==='amari'?'1人分は何こ？あまりは何こ？':(kind==='group'?'何人に分けられた？':'1人分は何こ？'));
+  setMsg(kind==='amari'?'図をかぞえて、数字をおそう':'数字と、「こ」か「人」かをえらぼう');setButtons([]);
+}
+function putAns(v){if(J.phase!=='kotae')return;const i=J.ans[0]===null?0:(J.kind==='amari'&&J.ans[1]===null?1:-1);if(i<0)return;J.ans[i]=v;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
+function putUnit(u){if(J.phase!=='kotae'||J.kind==='amari')return;J.unit=u;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
+function clearAns(i){if(J.phase!=='kotae')return;J.ans[i]=null;renderAns();}
+function clearUnit(){if(J.phase!=='kotae')return;J.unit=null;renderAns();}
+function renderAns(){
+  document.querySelectorAll('#bRow .slot.ans').forEach((e,i)=>{e.firstChild.nodeValue=J.ans[i]===null?'□':String(J.ans[i]);e.classList.toggle('filled',J.ans[i]!==null);});
+  const u=document.querySelector('#bRow .slot.unit');if(u){u.textContent=J.unit===null?'□':J.unit;u.classList.toggle('filled',J.unit!==null);}
+}
+function maybeCheckKotae(){
+  if(J.kind==='amari'){if(J.ans[0]===null||J.ans[1]===null)return;}
+  else if(J.ans[0]===null||J.unit===null)return;
+  checkKotae();
+}
+function checkKotae(){
+  const k=J.kind;let ok,hint;
+  if(k==='deal'){ok=J.ans[0]===D.q&&J.unit==='こ';if(J.ans[0]!==D.q){hint='おさらのクッキーをかぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else hint='1人分はクッキーの数だから「こ」';}
+  else if(k==='group'){ok=J.ans[0]===G.n&&J.unit==='人';if(J.ans[0]!==G.n){hint='人をかぞえてみよう';pulseSel('#persons .person');}else hint='何人に分けられたか、だから「人」';}
+  else{ok=J.ans[0]===D.q&&J.ans[1]===D.r;if(J.ans[0]!==D.q){hint='おさらのクッキーをかぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else{hint='おぼんにのこったクッキーは何こ？';pulseSel('#cookies .ck[data-fit-in="tray"]');}}
+  if(ok){J.phase='done';if(k==='group')finishGroupUI(true);else finishDealUI(true);return;}
+  sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
+  setMsg(hint,true);
+  later(()=>{J.ans=[null,null];J.unit=null;renderAns();},700);
+}
+
+/* ---------- アニメ（rAF。検証では __tick を手回し／__instant で即時） ---------- */
+let anims=[],rafId=0;
+window.__instant=false;
+function tween(c,to,dur,cb){
+  if(window.__instant||dur<=0){Object.assign(c,to);applyCk(c);cb&&cb();return;}
+  anims.push({c,from:{x:c.x,y:c.y,s:c.s},to,t0:null,dur,cb});
+  if(!rafId)rafId=requestAnimationFrame(loop);
+}
+function loop(ts){rafId=0;window.__tick(ts);if(anims.length)rafId=requestAnimationFrame(loop);}
+window.__tick=function(ts){
+  for(const a of anims.slice()){
+    if(a.t0==null)a.t0=ts;
+    const p=Math.min(1,(ts-a.t0)/a.dur), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    a.c.x=a.from.x+(a.to.x-a.from.x)*e; a.c.y=a.from.y+(a.to.y-a.from.y)*e-Math.sin(p*Math.PI)*70; a.c.s=a.from.s+(a.to.s-a.from.s)*e;
+    applyCk(a.c);
+    if(p>=1){anims.splice(anims.indexOf(a),1);a.cb&&a.cb();}
+  }
+};
+function applyCk(c){c.el.setAttribute('transform',`translate(${c.x.toFixed(1)} ${c.y.toFixed(1)}) scale(${c.s.toFixed(3)})`);}
+function later(fn,ms){if(window.__instant)fn();else setTimeout(fn,ms);}   // 検証中は同期で回す
+
+/* ---------- 図のぶひん ---------- */
+function drawCookie(g){                     // 半径30を基準に描く（scaleで大きさを変える）
+  const inn=el('g',{class:'in'},g);
+  el('circle',{cx:0,cy:0,r:30,fill:COL.cookie,stroke:COL.cookieD,'stroke-width':3},inn);
+  [[-11,-8],[9,-12],[-4,10],[13,7],[-16,9]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:4.2,fill:COL.choc},inn));
+}
+function drawTray(n){
+  const g=$('tray');clear(g);
+  el('rect',{x:TRAY.x,y:TRAY.y,width:TRAY.w,height:TRAY.h,rx:26,fill:COL.tray,stroke:COL.trayD,'stroke-width':5,'data-fit':'tray'},g);
+  el('rect',{x:TRAY.x+18,y:TRAY.y+16,width:TRAY.w-36,height:TRAY.h-32,rx:18,fill:'none',stroke:'#fff','stroke-width':3,opacity:.7},g);
+}
+function traySlot(i,n){
+  const cols=Math.min(n,10),rows=Math.ceil(n/cols),cell=84,rowH=76;
+  const row=Math.floor(i/cols),col=i%cols,rowN=(row<rows-1)?cols:n-(rows-1)*cols;
+  const x=TRAY.x+TRAY.w/2-(rowN-1)*cell/2+col*cell;
+  const y=TRAY.y+TRAY.h/2-(rows-1)*rowH/2+row*rowH;
+  return {x,y,s:.9};
+}
+function personGeom(idx,n,L){
+  const gap=900/n,cx=50+gap*(idx+.5),pw=Math.min(250,gap-16);
+  return {cx,pw,cell:pw/5,faceY:L.faceY,plateY:L.plateY};
+}
+function plateSlot(idx,n,slot,q,L){          // q＝その皿にのる予定の数（中央ぞろえ用）
+  const g=personGeom(idx,n,L);
+  const row=slot<5?0:1, col=slot%5;
+  const rowN=row===0?Math.min(Math.max(q,slot+1),5):Math.max(q-5,slot-4);
+  const x=g.cx-(rowN-1)*g.cell/2+col*g.cell;
+  const y=g.plateY-24-row*g.cell*.85;
+  return {x,y,s:(g.cell*.42)/30};
+}
+function extraSlot(idx,n,q){                 // ⑤同じ数をこえた1こ＝山の上にのせる（はみ出しが見える）
+  const g=personGeom(idx,n,LMAIN),rows=q>5?2:1;
+  return {x:g.cx,y:g.plateY-24-rows*g.cell*.85,s:(g.cell*.42)/30};
+}
+function drawPerson(parent,idx,n,L,tag){
+  const g=personGeom(idx,n,L);
+  const p=el('g',{class:'person','data-p':tag},parent);
+  const inn=el('g',{class:'in'},p);
+  el('rect',{x:g.cx-g.pw/2-6,y:g.faceY-34,width:g.pw+12,height:(g.plateY-g.faceY)+70,rx:18,fill:'none',stroke:'none',class:'zone','data-fit':tag},inn);
+  el('rect',{x:g.cx-34,y:g.faceY+24,width:68,height:42,rx:16,fill:SHIRT[idx%5]},inn);
+  el('circle',{cx:g.cx,cy:g.faceY,r:28,fill:COL.skin,stroke:COL.skinD,'stroke-width':2.5},inn);
+  el('path',{d:`M${g.cx-28},${g.faceY-4} a28,28 0 0 1 56,0 a32,17 0 0 0 -56,0z`,fill:HAIR[idx%5]},inn);
+  el('circle',{cx:g.cx-10,cy:g.faceY+2,r:3.2,fill:COL.ink},inn);
+  el('circle',{cx:g.cx+10,cy:g.faceY+2,r:3.2,fill:COL.ink},inn);
+  el('path',{d:`M${g.cx-9},${g.faceY+11} q9,8 18,0`,fill:'none',stroke:COL.ink,'stroke-width':2.5,'stroke-linecap':'round'},inn);
+  el('ellipse',{cx:g.cx,cy:g.plateY,rx:g.pw/2,ry:30,fill:'#fff',stroke:COL.plate,'stroke-width':5},inn);
+  el('ellipse',{cx:g.cx,cy:g.plateY,rx:g.pw/2*.72,ry:18,fill:'none',stroke:COL.plateL,'stroke-width':3},inn);
+  return p;
+}
+function drawBubble(idx,n,L,text,color){
+  const g=personGeom(idx,n,L);
+  const b=el('g',{class:'bubble','data-p':'p'+idx},$('bubbles'));
+  const w=Math.max(64,text.length*30+20);
+  el('rect',{x:g.cx-w/2,y:g.faceY-92,width:w,height:40,rx:14,fill:'#fff',stroke:color,'stroke-width':4},b);
+  el('path',{d:`M${g.cx-8},${g.faceY-52} l8,10 l8,-10z`,fill:'#fff',stroke:color,'stroke-width':4,'stroke-linejoin':'round'},b);
+  el('rect',{x:g.cx-10,y:g.faceY-56,width:20,height:6,fill:'#fff'},b);
+  el('text',{x:g.cx,y:g.faceY-63,'text-anchor':'middle','font-size':28,fill:color},b).textContent=text;
+  return b;
+}
+function makeCookies(n){
+  const g=$('cookies');clear(g);S.cookies=[];
+  for(let i=0;i<n;i++){
+    const e=el('g',{class:'ck','data-i':i,'data-fit-in':'tray'},g);drawCookie(e);
+    const c={i,el:e,x:0,y:0,s:1,where:'tray',slot:i};const t=traySlot(i,n);Object.assign(c,t);applyCk(c);S.cookies.push(c);
+  }
+}
+function trayCookies(){return S.cookies.filter(c=>c.where==='tray');}
+function plateCount(p){return S.cookies.filter(c=>c.where===p).length;}
+
+/* ---------- 画面（段）を出す ---------- */
+function stageNum(){return S.stage+1;}
+function goStage(i){
+  S.stage=Math.max(0,Math.min(4,i));
+  S.dealt=0;S.persons=0;S.done=false;S.failed=false;S.lit=0;S.ans=[null,null];S.busy=false;anims.length=0;
+  J={phase:'',slots:[null,null],ans:[null,null],unit:null,kind:''};
+  ['tray','persons','cookies','bubbles','overlay'].forEach(id=>clear($(id)));
+  $('persons').classList.remove('shake');
+  $('eq').hidden=true;$('eq').innerHTML='';$('strip').hidden=true;$('choices').hidden=true;$('choices').innerHTML='';
+  $('nextrow').hidden=true;setMsg('');
+  const n=stageNum();
+  if(n===1)buildDeal(P[1].a,P[1].b,false);
+  else if(n===2)buildGroup();
+  else if(n===3)buildCompare();
+  else if(n===4)buildKake();
+  else buildDeal(P[5].a,P[5].b,true);
+  renderBand();updateBack();
+}
+function nextStage(){ if(S.stage<4)goStage(S.stage+1); else goStage(0); }
+function goBack(){
+  if(hasProgress())goStage(S.stage);
+  else if(S.stage>0)goStage(S.stage-1);
+}
+function hasProgress(){return S.dealt>0||S.persons>0||S.lit>0||S.ans[0]!==null||S.ans[1]!==null||S.done||J.slots.some(v=>v!==null)||J.ans.some(v=>v!==null)||J.phase==='deal';}
+function updateBack(){$('navBackBtn').disabled=!(hasProgress()||S.stage>0);}
+function renderBand(){
+  const b=$('band');b.innerHTML='';
+  STAGES.forEach((st,i)=>{
+    const btn=document.createElement('button');btn.className=st.cls+(i===S.stage?' on':'');
+    btn.innerHTML=`<span class="no${S.cleared[i]?' done':''}">${st.n}</span>${st.label}`;
+    btn.onclick=()=>goStage(i);b.appendChild(btn);
+  });
+}
+function setStatus(h){$('status').innerHTML=h;}
+function setMsg(h,warn){const m=$('msg');m.innerHTML=h;m.classList.toggle('warn',!!warn);}
+function setButtons(list){
+  const r=$('btnrow');r.innerHTML='';
+  list.forEach(b=>{const e=document.createElement('button');e.className='go'+(b.cls?' '+b.cls:'');e.id=b.id||'';e.textContent=b.text;e.onclick=b.fn;if(b.disabled)e.disabled=true;r.appendChild(e);});
+}
+function showNext(last){$('nextrow').hidden=false;$('nextBtn').textContent=last?'さいしょから ▶':'つぎへ ▶';}
+function markCleared(){S.cleared[S.stage]=true;renderBand();}
+function numCtl(key,val,cls){return `<span class="numctl"><button class="pm" onclick="adjust('${key}',-1)" aria-label="へらす">−</button><b class="num ${cls}">${val}</b><button class="pm" onclick="adjust('${key}',1)" aria-label="ふやす">＋</button></span>`;}
+function qHTML(sentence,ctls){return `<div class="q">${sentence}</div>${ctls?`<div class="ctl"><span class="u">数をかえる</span>${ctls}</div>`:''}`;}
+function chip(v,cls,lab,key){return `<span class="chip ${cls}" ${key?`onclick="hl('${key}')"`:''}>${v}<small>${lab||''}</small></span>`;}
+
+/* ---------- 数の ± ---------- */
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+function adjust(key,d){
+  const n=stageNum();
+  if(n===1||n===4){                       // a は b の倍数、1人分は2〜5こ（おさら1だん）
+    const p=P[1];
+    if(key==='b'){const q=p.a/p.b;p.b=clamp(p.b+d,2,5);p.a=clamp(q,2,Math.floor(Math.min(20,5*p.b)/p.b))*p.b;}   // 1人分はそのまま
+    else{p.a=clamp(p.a+d*p.b,2*p.b,Math.floor(Math.min(20,5*p.b)/p.b)*p.b);}
+  }else if(n===2){                        // a は k の倍数、人数は2〜5人
+    const p=P[2];
+    if(key==='k'){const m=p.a/p.k;p.k=clamp(p.k+d,2,5);p.a=clamp(m,2,Math.floor(Math.min(20,5*p.k)/p.k))*p.k;}   // 人数はそのまま
+    else{p.a=clamp(p.a+d*p.k,2*p.k,Math.floor(Math.min(20,5*p.k)/p.k)*p.k);}
+  }else if(n===5){
+    const p=P[5];
+    if(key==='b')p.b=clamp(p.b+d,2,5); else p.a=clamp(p.a+d,6,20);
+  }
+  goStage(S.stage);
+}
+
+/* ---------- ① 同じ数ずつ ／ ⑤ あまり ---------- */
+let D={a:12,b:3,q:4,r:0,amari:false};
+function buildDeal(a,b,amari){
+  D={a,b,q:Math.floor(a/b),r:a%b,amari};
+  drawTray(a);makeCookies(a);
+  for(let i=0;i<b;i++)drawPerson($('persons'),i,b,LMAIN,'p'+i);
+  const key=amari?'5':'1';
+  $('qcard').innerHTML=qHTML(`クッキー<b class="c-cookie">${a}</b>こを<b class="c-plate">${b}</b>人で同じ数ずつ分けます。<br>1人分は何こ？`,
+    `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span>`);
+  setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
+  if(jibun())startShiki(amari?'amari':'deal');else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
+}
+function dealOne(){
+  if(S.done||S.failed||(jibun()&&J.phase==='shiki'))return;
+  const tc=trayCookies();if(!tc.length)return;
+  const c=tc[0],b=D.b,p=S.dealt%b,slot=Math.floor(S.dealt/b);
+  S.dealt++;c.where='p'+p;c.slot=slot;c.el.setAttribute('data-fit-in','p'+p);
+  const to=slot<D.q?plateSlot(p,b,slot,D.q,LMAIN):extraSlot(p,b,D.q);sfxDeal();
+  setStatus(`のこり<b class="c-cookie">${trayCookies().length}</b>こ`);
+  if(S.dealt===b&&trayCookies().length){setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'},{text:'のこりもくばる',fn:dealAll,cls:'sub',id:'dealAllBtn'}]);}
+  updateBack();
+  tween(c,to,420,()=>{sfxLand();afterLand();});   // 着地後にできた判定（表示の更新はこの前に済ませる）
+}
+function dealAll(){
+  if(S.done||S.failed||(jibun()&&J.phase==='shiki'))return;
+  const step=()=>{if(!trayCookies().length||S.done||S.failed)return;dealOne();if(!window.__instant)setTimeout(step,140);else step();};
+  step();
+}
+function afterLand(){
+  if(anims.length||trayCookies().length||S.done||S.failed)return;
+  const b=D.b,counts=[];for(let i=0;i<b;i++)counts.push(plateCount('p'+i));
+  const same=counts.every(c=>c===counts[0]);
+  if(same){finishDeal();return;}
+  /* ⑤ 同じ数ずつに ならなかった＝ここが「こまる」 */
+  S.failed=true;
+  counts.forEach((c,i)=>drawBubble(i,b,LMAIN,c+'こ',COL.amber));
+  $('persons').classList.add('shake');sfxWrong();
+  setStatus('同じ数ずつになっていない！');
+  setMsg(`${b}人にもう1こずつくばるには${b}こいる。<br>${D.r}こではたりない。`,true);
+  setButtons([{text:'1こくばる',fn:dealOne,disabled:true}]);
+  const back=()=>{
+    $('persons').classList.remove('shake');
+    const extra=S.cookies.filter(c=>c.where!=='tray'&&c.slot>=D.q);
+    let left=extra.length;
+    extra.forEach((c,j)=>{c.where='tray';c.el.setAttribute('data-fit-in','tray');const t=traySlot(c.i,D.a);later(()=>tween(c,t,480,()=>{if(--left===0){S.failed=false;finishDeal();}}),j*120);});
+  };
+  later(back,1400);
+}
+function finishDeal(){
+  S.done=true;clear($('bubbles'));setButtons([]);
+  if(jibun()){sfxLand();startKotae(D.amari?'amari':'deal');updateBack();return;}   // じぶんで：答えを入れてから しきが出る
+  finishDealUI(false);
+}
+function finishDealUI(self){
+  sfxDone();
+  const {a,b,q,r,amari}=D;
+  for(let i=0;i<b;i++)drawBubble(i,b,LMAIN,q+'こ',COL.amber);
+  setButtons([]);
+  const sei=self?'せいかい！':'';
+  if(!amari||r===0){
+    setStatus(`${sei}1人分は<b class="c-cookie">${q}</b>こ！${amari?'あまりはなし':''}`);
+    $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}</div><div class="read">${a}わる${b}は${q}</div>`;
+    setMsg(amari?`ぴったり分けられた！あまりは0。`:(self?`しきの数をおすと、図のどこかわかるよ。`:`このことを<b>${a} ÷ ${b} = ${q}</b>とかきます。<br>しきの数をおすと、図のどこかわかるよ。`));
+  }else{
+    setStatus(`${sei}1人分は<b class="c-cookie">${q}</b>こ、<b class="c-cookie">${r}</b>こあまる！`);
+    $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}<span class="grp"><span class="amari">あまり</span>${chip(r,'c-cookie','あまり','rest')}</span></div><div class="read">${a}わる${b}は${q}あまり${r}</div>`;
+    setMsg(`もう1こずつくばるには${b}こいる。<br>${r}こではたりない。<br>だから、あまり<b class="c-cookie">${r}</b>はわる数<b class="c-plate">${b}</b>より小さい。`);
+  }
+  $('eq').hidden=false;markCleared();showNext(amari);updateBack();
+}
+
+/* ---------- ② ○こずつ ---------- */
+let G={a:12,k:3,n:4};
+function buildGroup(){
+  const {a,k}=P[2];G={a,k,n:a/k};
+  drawTray(a);makeCookies(a);
+  $('qcard').innerHTML=qHTML(`クッキー<b class="c-cookie">${a}</b>こを1人に<b class="c-cookie">${k}</b>こずつ分けます。<br>何人に分けられる？`,
+    `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('k',k,'c-cookie')}<span class="u">こずつ</span></span>`);
+  setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
+  if(jibun())startShiki('group');else setButtons([{text:`${k}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);
+}
+function takeGroup(){
+  if(S.done||S.busy||(jibun()&&J.phase==='shiki'))return;
+  const tc=trayCookies();if(tc.length<G.k)return;
+  const p=S.persons;S.persons++;S.busy=true;
+  drawPerson($('persons'),p,G.n,LMAIN,'p'+p);
+  if(!jibun())drawBubble(p,G.n,LMAIN,String(p+1),COL.plateT);   // じぶんで：人数は自分でかぞえる
+  let left=G.k;sfxDeal();
+  for(let j=0;j<G.k;j++){
+    const c=tc[j];c.where='p'+p;c.slot=j;c.el.setAttribute('data-fit-in','p'+p);
+    const to=plateSlot(p,G.n,j,G.k,LMAIN);
+    later(()=>tween(c,to,420,()=>{if(--left===0){S.busy=false;sfxLand();afterGroup();}}),j*90);
+  }
+  setStatus(`のこり<b class="c-cookie">${trayCookies().length}</b>こ ／ <b class="c-plate">${S.persons}</b>人め`);
+  updateBack();
+}
+function afterGroup(){
+  if(trayCookies().length)return;
+  S.done=true;setButtons([]);
+  if(jibun()){sfxLand();startKotae('group');updateBack();return;}
+  finishGroupUI(false);
+}
+function finishGroupUI(self){
+  sfxDone();const {a,k,n}=G;
+  if(self){clear($('bubbles'));for(let i=0;i<n;i++)drawBubble(i,n,LMAIN,String(i+1),COL.plateT);}
+  setStatus(`${self?'せいかい！':''}<b class="c-plate">${n}</b>人に分けられた！`);
+  $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(k,'c-cookie','1人分','perplate')}<span class="op">=</span>${chip(n,'c-plate','人','persons')}</div><div class="read">${a}わる${k}は${n}</div>`;
+  $('eq').hidden=false;
+  setMsg(`これも<b>${a} ÷ ${k} = ${n}</b>。<br>①と同じしきなのに、答えは「人」！`);
+  markCleared();showNext(false);updateBack();
+}
+
+/* ---------- ③ くらべる ---------- */
+const LTOP={faceY:80,plateY:262},LBOT={faceY:392,plateY:574};
+let C={a:12,b:3,q:4};
+function staticScene(parent,people,each,L,tagPrefix){
+  for(let i=0;i<people;i++){
+    drawPerson(parent,i,people,L,tagPrefix+i);
+    for(let j=0;j<each;j++){
+      const t=plateSlot(i,people,j,each,L);
+      const e=el('g',{class:'ck','data-fit-in':tagPrefix+i,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},parent);drawCookie(e);
+    }
+  }
+}
+function buildCompare(){
+  const {a,b}=P[1],q=a/b;C={a,b,q};
+  const ov=$('overlay');
+  const top=el('g',{id:'cmpTop'},ov),bot=el('g',{id:'cmpBot'},ov);
+  el('line',{x1:40,y1:312,x2:960,y2:312,stroke:'#e8dfd6','stroke-width':3,'stroke-dasharray':'10 10'},ov);
+  const t1=el('text',{x:24,y:36,'font-size':28,fill:COL.ink},top);
+  el('tspan',{fill:COL.plateT},t1).textContent=`${b}人`;el('tspan',{},t1).textContent='で分ける';
+  const t2=el('text',{x:24,y:350,'font-size':28,fill:COL.ink},bot);
+  el('tspan',{fill:COL.amber},t2).textContent=`${b}こ`;el('tspan',{},t2).textContent='ずつ分ける';
+  staticScene(top,b,q,LTOP,'t');
+  staticScene(bot,q,b,LBOT,'u');
+  $('qcard').innerHTML=`どちらもしきは<b>${a} ÷ ${b} = ${q}</b>。<br>答えはどっち？`;
+  setStatus('図を見てえらぼう');
+  setButtons([]);
+  const ch=$('choices');ch.hidden=false;ch.innerHTML=
+    `<div class="cmp" id="cmp0"><div class="cap"><b class="c-plate">${b}人</b>で分ける</div><div class="eqrow" id="cmpEq0">${chip(a,'','')}<span class="op">÷</span>${chip(b,'','')}<span class="op">=</span>${chip(q,'','')}</div><div class="pick"><button onclick="pick(0,'ko',this)">${q}こ</button><button onclick="pick(0,'nin',this)">${q}人</button></div></div>`+
+    `<div class="cmp" id="cmp1"><div class="cap"><b class="c-cookie">${b}こ</b>ずつ分ける</div><div class="eqrow" id="cmpEq1">${chip(a,'','')}<span class="op">÷</span>${chip(b,'','')}<span class="op">=</span>${chip(q,'','')}</div><div class="pick"><button onclick="pick(1,'ko',this)">${q}こ</button><button onclick="pick(1,'nin',this)">${q}人</button></div></div>`;
+}
+function pick(row,v,btn){
+  if(S.ans[row]!==null)return;
+  const right=row===0?'ko':'nin';
+  if(v!==right){btn.classList.remove('miss');void btn.offsetWidth;btn.classList.add('miss');sfxWrong();
+    setMsg(row===0?`図の上を見て。<br>1人のおさらにクッキーは何こ？`:`図の下を見て。<br>おさらはいくつある？`,true);
+    pulseSel(row===0?'#cmpTop .ck[data-fit-in="t0"]':'#cmpBot .person');return;}
+  S.ans[row]=v;btn.classList.add('hit');sfxLand();
+  btn.parentElement.querySelectorAll('button').forEach(b=>{b.disabled=true;});
+  const {a,b,q}=C,eq=$('cmpEq'+row);
+  eq.innerHTML=row===0
+    ?`${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,'c-plate','人')}<span class="op">=</span>${chip(q,'c-cookie','1人分')}`
+    :`${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,'c-cookie','1人分')}<span class="op">=</span>${chip(q,'c-plate','人')}`;
+  setMsg('');
+  if(S.ans[0]!==null&&S.ans[1]!==null){
+    S.done=true;sfxDone();setStatus('せいかい！');
+    setMsg(`同じしきでも、<b class="c-plate">${b}</b>と<b class="c-cookie">${b}</b>、<b class="c-cookie">${q}</b>と<b class="c-plate">${q}</b>のいみがちがう！`);
+    markCleared();showNext(false);
+  }else setStatus('もうひとつもえらぼう');
+  updateBack();
+}
+function pulseSel(sel){document.querySelectorAll(sel).forEach(e=>{e.classList.remove('pulse');void e.getBoundingClientRect();e.classList.add('pulse');setTimeout(()=>e.classList.remove('pulse'),1500);});}
+
+/* ---------- ④ かけ算で たしかめる ---------- */
+let K={a:12,b:3,q:4};
+function buildKake(){
+  const {a,b}=P[1],q=a/b;K={a,b,q};
+  for(let i=0;i<b;i++)drawPerson($('persons'),i,b,LMAIN,'p'+i);
+  const g=$('cookies');S.cookies=[];
+  for(let i=0;i<b;i++)for(let j=0;j<q;j++){
+    const t=plateSlot(i,b,j,q,LMAIN);
+    const e=el('g',{class:'ck dim','data-fit-in':'p'+i,'data-slot':j,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},g);drawCookie(e);
+  }
+  $('qcard').innerHTML=qHTML(`<b class="c-plate">${b}</b>人に同じ数ずつ分けたら、ぜんぶで<b class="c-cookie">${a}</b>こ。1人分は何こ？`,
+    `<span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span><span class="sep"></span><span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span>`);
+  setStatus(`<b class="c-plate">${b}</b>のだんをおしてさがそう`);
+  setButtons([]);
+  $('eq').innerHTML=`<div class="eqrow">${chip(b,'c-plate','人')}<span class="op">×</span>${chip('□','blank','1人分')}<span class="op">=</span>${chip(a,'c-cookie','ぜんぶ')}</div>`;
+  $('eq').hidden=false;
+  const st=$('strip');st.hidden=false;st.innerHTML='';
+  for(let k=1;k<=9;k++){const e=document.createElement('button');e.textContent=`${b}×${k}=${b*k}`;e.onclick=()=>light(k,e);st.appendChild(e);}
+}
+function light(k,btn){
+  if(S.done)return;
+  const {a,b,q}=K;S.lit=k;
+  $('strip').querySelectorAll('button').forEach(e=>e.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('#cookies .ck').forEach(e=>{e.classList.toggle('dim',+e.getAttribute('data-slot')>=k);});
+  clear($('bubbles'));
+  for(let i=0;i<b;i++)drawBubble(i,b,LMAIN,Math.min(k,q)+'こ',COL.amber);
+  const tot=b*k;sfxDeal();
+  $('eq').innerHTML=`<div class="eqrow">${chip(b,'c-plate','人')}<span class="op">×</span>${chip(k,'c-cookie','1人分')}<span class="op">=</span>${chip(tot,tot===a?'c-cookie':'blank','ぜんぶ')}</div>`;   // 12にならない間は うすい
+  if(tot===a){
+    S.done=true;btn.classList.add('hit');sfxDone();
+    setStatus(`<b class="c-plate">${b}</b> × <b class="c-cookie">${k}</b> = <b class="c-cookie">${a}</b>！`);
+    $('eq').innerHTML+=`<div class="eqrow" style="margin-top:8px">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(k,'c-cookie','1人分','perplate')}</div>`;
+    setMsg(`${b} × ${k} = ${a}だから、${a} ÷ ${b} = ${k}。<br>わり算の答えはかけ算でさがせる！`);
+    markCleared();showNext(false);
+  }else if(tot<a){setStatus(`${b} × ${k} = ${tot}。まだ${a}にたりない`);setMsg('');}
+  else{setStatus(`${b} × ${k} = ${tot}。${a}をこえた`);setMsg('');}
+  updateBack();
+}
+
+/* ---------- しきの数 → 図を光らせる ---------- */
+function hl(key){
+  const n=stageNum();
+  if(key==='cookies')pulseSel('#cookies .ck:not(.dim)');
+  else if(key==='persons')pulseSel('#persons .person');
+  else if(key==='perplate')pulseSel('#cookies .ck[data-fit-in="p0"]:not(.dim)');
+  else if(key==='rest')pulseSel('#cookies .ck[data-fit-in="tray"]');
+  sfxLand();
+}
+
+/* ---------- 起動 ---------- */
+syncSound();syncMode();goStage(0);
+window.S=S;window.P=P;window.goStage=goStage;window.dealOne=dealOne;window.dealAll=dealAll;window.takeGroup=takeGroup;window.pick=pick;window.light=light;
+</script>
+</body>
+</html>

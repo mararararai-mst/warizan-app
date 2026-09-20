@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>自動チェック｜わり算って なに？</title>
+<style>
+body{margin:0;font-family:system-ui,sans-serif;background:#1b1f24;color:#e8eef4;padding:16px}
+h1{font-size:16px;margin:0 0 4px}
+p.note{font-size:12px;color:#93a3b1;margin:0 0 14px;line-height:1.7}
+p.note code{background:#2a323a;padding:1px 5px;border-radius:4px}
+table.svgcheck{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:18px}
+table.svgcheck th,table.svgcheck td{border:1px solid #333c45;padding:6px 9px;text-align:left;vertical-align:top}
+table.svgcheck th{background:#242b32;font-weight:600}
+table.svgcheck td.ok{color:#5bd6a6;font-weight:700;text-align:center;width:70px}
+table.svgcheck td.ng{color:#ff7b7b;background:#3a2226;font-weight:700;text-align:center;width:70px}
+table.svgcheck tfoot td{background:#242b32;font-weight:700}
+iframe{position:absolute;left:-9999px;border:0}
+#f{width:1280px;height:800px}
+#t{width:1024px;height:768px}
+#m{width:375px;height:812px}
+</style>
+</head>
+<body>
+<h1>自動チェック｜わり算って なに？（3年 わり算アプリ）</h1>
+<p class="note">
+  絵と文字が成立しているかを座標で測ります（JSの動作は <code>_trace.py</code>）。<br>
+  検査そのものは <code>education/_lib/svg-check.js</code>。ここに書くのは<b>この教材の固有事情だけ</b>：
+  おぼん（<code>data-fit="tray"</code>）と 人のゾーン（<code>data-fit="p0…"</code>）に、クッキー（<code>data-fit-in</code>）が収まっているか。<br>
+  PC幅1280 ／ タブレット横1024 ／ スマホ幅375 の3つ × 全状態で測ります。
+</p>
+<div id="mount"></div>
+<iframe id="f"></iframe>
+<iframe id="t"></iframe>
+<iframe id="m"></iframe>
+
+<script src="../_lib/svg-check.js"></script>
+<script>
+var all = [];
+
+/* 状態は「はじめ／できた」＋ 数を変えたもの。各段 最低2状態 */
+var STATES = [
+  ['じ1 しき',         function(w){ w.setMode('jibun'); w.goStage(0); }],
+  ['じ1 まちがい',     function(w){ w.setMode('jibun'); w.goStage(0); w.putTile(3); w.putTile(12); }],
+  ['じ1 こたえ',       function(w){ w.setMode('jibun'); w.goStage(0); w.putTile(12); w.putTile(3); w.dealAll(); }],
+  ['じ1 できた',       function(w){ w.setMode('jibun'); w.goStage(0); w.putTile(12); w.putTile(3); w.dealAll(); w.putAns(4); w.putUnit('こ'); }],
+  ['じ2 こたえ',       function(w){ w.setMode('jibun'); w.goStage(1); w.putTile(12); w.putTile(3); for(var i=0;i<4;i++) w.takeGroup(); }],
+  ['じ5 こたえ',       function(w){ w.setMode('jibun'); w.goStage(4); w.putTile(14); w.putTile(3); w.dealAll(); }],
+  ['じ5 できた',       function(w){ w.setMode('jibun'); w.goStage(4); w.putTile(14); w.putTile(3); w.dealAll(); w.putAns(4); w.putAns(2); w.setMode('mite'); }],
+  ['1 はじめ',        function(w){ w.setMode('mite'); w.goStage(0); }],
+  ['1 3こ くばった',  function(w){ w.goStage(0); w.dealOne(); w.dealOne(); w.dealOne(); }],
+  ['1 できた',        function(w){ w.goStage(0); w.dealAll(); }],
+  ['1 20こ 5人',      function(w){ w.P[1].a=20; w.P[1].b=5; w.goStage(0); w.dealAll(); }],
+  ['1 10こ 2人',      function(w){ w.P[1].a=10; w.P[1].b=2; w.goStage(0); w.dealAll(); w.P[1].a=12; w.P[1].b=3; }],
+  ['2 はじめ',        function(w){ w.goStage(1); }],
+  ['2 1人め',         function(w){ w.goStage(1); w.takeGroup(); }],
+  ['2 できた',        function(w){ w.goStage(1); for(var i=0;i<4;i++) w.takeGroup(); }],
+  ['2 20こ 4こずつ',  function(w){ w.P[2].a=20; w.P[2].k=4; w.goStage(1); for(var i=0;i<5;i++) w.takeGroup(); w.P[2].a=12; w.P[2].k=3; }],
+  ['3 はじめ',        function(w){ w.goStage(2); }],
+  ['3 20こ 4人',      function(w){ w.P[1].a=20; w.P[1].b=4; w.goStage(2); w.P[1].a=12; w.P[1].b=3; }],
+  ['3 10こ 5人',      function(w){ w.P[1].a=10; w.P[1].b=5; w.goStage(2); w.P[1].a=12; w.P[1].b=3; }],
+  ['4 はじめ',        function(w){ w.goStage(3); }],
+  ['4 できた',        function(w){ w.goStage(3); w.light(4, w.document.querySelectorAll('#strip button')[3]); }],
+  ['5 はじめ',        function(w){ w.goStage(4); }],
+  ['5 できた あまり2', function(w){ w.goStage(4); w.dealAll(); }],
+  ['5 20こ 2人',      function(w){ w.P[5].a=20; w.P[5].b=2; w.goStage(4); w.dealAll(); w.P[5].a=14; w.P[5].b=3; }],
+  ['5 20こ 3人',      function(w){ w.P[5].a=20; w.P[5].b=3; w.goStage(4); w.dealAll(); w.P[5].a=14; w.P[5].b=3; }],
+  ['5 6こ 5人',       function(w){ w.P[5].a=6; w.P[5].b=5; w.goStage(4); w.dealAll(); w.P[5].a=14; w.P[5].b=3; }]
+];
+
+function containsFor(d){
+  /* 容器→中身は data-fit / data-fit-in で総なめ（列挙しない） */
+  var out=[], zones=d.querySelectorAll('#fig [data-fit]');
+  zones.forEach(function(z){
+    var tag=z.getAttribute('data-fit');
+    if(!d.querySelector('#fig [data-fit-in="'+tag+'"]')) return;
+    out.push({ svg:'#fig', name:tag, container:'#fig [data-fit="'+tag+'"]', items:'#fig [data-fit-in="'+tag+'"]' });
+  });
+  return out;
+}
+
+function runOne(f, label, next){
+  var d=f.contentDocument, w=f.contentWindow;
+  w.__instant=true;
+  var res=[];
+  STATES.forEach(function(st){
+    st[1](w);
+    /* その状態で hidden の「つぎへ」等も文字として測る（測れなかった数をNGにされるため） */
+    d.querySelectorAll('[hidden]').forEach(function(e){ if(e.textContent.trim()) e.hidden=false; });
+    var sub=d.querySelector('header h1 small'); if(sub) sub.style.display='inline';   // スマホ幅ではCSSで消しているサブタイトル（意図した非表示）
+    var r=SVGCheck.run({
+      doc:d, svgs:['#fig'], page:true,
+      states:[{name:label+' '+st[0], apply:null}],
+      ignore:['#tray > rect:last-of-type', '.zone', '#overlay line'],   // おぼんの内側の白線／見えないゾーン／くらべるの点線
+      ignoreEnds:['line'],
+      contains:containsFor(d)
+    });
+    res=res.concat(r);
+  });
+  all=all.concat(res);
+  next();
+}
+
+var f=document.getElementById('f'), t=document.getElementById('t'), m=document.getElementById('m');
+f.onload=function(){ runOne(f,'PC1280',function(){ t.src='index.html?t='+Date.now(); }); };
+t.onload=function(){ runOne(t,'TAB1024',function(){ m.src='index.html?t='+Date.now(); }); };
+m.onload=function(){ runOne(m,'SP375',function(){
+  var ng=SVGCheck.render(all, document.getElementById('mount'));
+  window.__CHECK={ ng:ng, total:all.length, items:all };
+}); };
+f.src='index.html?t='+Date.now();
+</script>
+</body>
+</html>
