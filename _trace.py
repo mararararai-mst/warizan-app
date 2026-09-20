@@ -220,6 +220,58 @@ def trace(pg):
     # ※ このアプリは 分かち書き（「クッキー 12こを」）を意図して使うので、件数だけ出す
     print(f'  (分かち書きの空白 {len(sp)}件：意図したもの)')
 
+LINES_JS = r"""() => {
+  const out=[];
+  const walk=(el)=>{ for(const nd of el.childNodes){
+    if(nd.nodeType===3){
+      const t=nd.nodeValue; if(!t.trim()) continue;
+      const pe=nd.parentElement; if(!pe||pe.closest('svg')) continue;
+      const cs=getComputedStyle(pe);
+      if(cs.display==='none'||cs.visibility==='hidden'||pe.offsetParent===null) continue;
+      const lines=[]; let cur='', prevTop=null;
+      for(let i=0;i<t.length;i++){
+        const r=document.createRange(); r.setStart(nd,i); r.setEnd(nd,i+1);
+        const b=r.getBoundingClientRect(); if(b.width===0&&b.height===0){cur+=t[i];continue;}
+        const top=Math.round(b.top);
+        if(prevTop!==null&&top>prevTop+2){ lines.push(cur); cur=''; }
+        prevTop=top; cur+=t[i];
+      }
+      lines.push(cur);
+      if(lines.length>1) out.push({lines});
+    } else if(nd.nodeType===1){
+      const c=getComputedStyle(nd);
+      if(c.display!=='none'&&c.visibility!=='hidden'&&nd.offsetParent!==null) walk(nd);
+    } } };
+  walk(document.body);
+  return out;
+}"""
+
+def wrapcheck(browser):
+    """折り返しが「文の途中」で起きていないか。
+       孤立折り返し（最終行1〜2字）とは別物で、2026-09-20 にユーザー指摘で発覚するまで未測定だった。
+       本文は jp() が文節を <span class="w"> で包むので、切れてよいのは文節の境目だけ。"""
+    JP = r'[ぁ-んァ-ヶ一-龥ー]'
+    bad = []
+    for (w, h) in [(1280, 800), (1366, 768), (1024, 768), (820, 1180), (375, 812)]:
+        ctx = browser.new_context(viewport={'width': w, 'height': h})
+        pg = ctx.new_page(); pg.goto(URL); pg.wait_for_selector('#band button')
+        for name, js in STATES:
+            run_state(pg, js)
+            for it in pg.evaluate(LINES_JS):
+                ls = it['lines']
+                for i in range(len(ls) - 1):
+                    a = ls[i][-1:] ; c = ls[i + 1][:1]
+                    if not a or not c: continue
+                    why = None
+                    if c in '。、！？）」': why = '行頭に句読点'
+                    elif re.match(JP, a) and re.match(JP, c): why = '文の途中'
+                    elif re.match(r'[0-9]', a) and re.match(JP, c): why = '数字と単位'
+                    elif re.match(JP, a) and re.match(r'[0-9]', c): why = '数字の前'
+                    if why: bad.append(f'{w}px {name} {why}: …{ls[i][-8:]} / {ls[i+1][:8]}…')
+        ctx.close()
+    check(not bad, '折り返しが文節の境目だけ（文の途中で切れない）', ' | '.join(dict.fromkeys(bad))[:400])
+
+
 def shots(pg, outdir, browser):
     from PIL import Image
     os.makedirs(outdir, exist_ok=True)
@@ -263,6 +315,7 @@ with sync_playwright() as p:
         shots(pg, sys.argv[sys.argv.index('--shots') + 1], b)
     else:
         trace(pg)
+        wrapcheck(b)
         print(f'OK {len(OKS)} / NG {len(FAIL)}')
         for f in FAIL: print('  ✗', f)
     errs = [e for e in errs if 'fonts.googleapis' not in e and 'fonts.gstatic' not in e]

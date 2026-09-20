@@ -101,6 +101,7 @@
   .read{text-align:center;font-size:15px;color:var(--ink-l);margin-top:6px}
   .msg{text-align:center;font-family:var(--font-body);font-weight:700;font-size:clamp(15px,1.3vw,17px);line-height:1.6;min-height:1.6em;text-wrap:pretty}
   .msg.warn{color:#d04a4a}
+  .w{white-space:nowrap}   /* 文節。ここでは切れない＝折り返しは文節の境目だけ */
   .nextrow{display:flex;justify-content:center}
   .next{font-size:clamp(18px,1.8vw,22px);padding:12px 30px;border-radius:18px;color:#fff;background:#3a8f3a;box-shadow:0 5px 0 rgba(0,0,0,.15);min-height:48px;animation:rise .4s backwards}
   .next:active{transform:translateY(4px)}
@@ -251,10 +252,10 @@ function startShiki(kind){
   J={phase:'shiki',slots:[null,null],ans:[null,null],unit:null,kind};
   const {a,b}=jNums(),q=Math.floor(a/b);
   const tiles=shuffle([a,b,q,a+b].filter((v,i,arr)=>arr.indexOf(v)===i));
-  setStatus('しきを作ろう');setButtons([]);
+  setStatus(jp('しきを|作ろう'));setButtons([]);
   const el=$('eq');el.hidden=false;
   el.innerHTML=`<div class="eqrow" id="bRow"><span class="chip slot" onclick="clearSlot(0)">□</span><span class="op">÷</span><span class="chip slot" onclick="clearSlot(1)">□</span><span class="op">=</span><span class="chip blank">？</span></div><div class="tiles">${tiles.map(v=>`<button class="tile" onclick="putTile(${v},this)">${v}</button>`).join('')}</div>`;
-  setMsg('数字をおして、□に入れよう');
+  setMsg(jp('数字を|おして、|□に|入れよう'));
 }
 function tileBtn(v){return [...document.querySelectorAll('#eq .tiles .tile')].find(t=>+t.textContent===v&&!t.disabled);}
 function putTile(v,btn){
@@ -275,16 +276,16 @@ function checkShiki(){
     J.phase='deal';sfxLand();
     const s=$('bRow').querySelectorAll('.slot');s[0].classList.add('c-cookie');s[1].classList.add(k==='group'?'c-cookie':'c-plate');
     const t=$('eq').querySelector('.tiles');if(t)t.remove();
-    setStatus(`○ ${a}÷${b}。くばってたしかめよう`);setMsg('');
+    setStatus(jp(`○ ${a}÷${b}。|くばって|たしかめよう`));setMsg('');
     if(k==='group')setButtons([{text:`${b}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
     return;
   }
   sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
-  let h='図を見て、もういちど';
-  if(x===b&&y===a)h='分けるもの（クッキーぜんぶの数）が先だよ';
-  else if(x===a)h=k==='group'?`${b}こずつだから、わる数は${b}`:`${b}人で分けるから、わる数は${b}`;
-  else if(y===b)h=`クッキーはぜんぶで${a}こ。わられる数は${a}`;
-  setMsg(h,true);
+  let h='図を見て、|もういちど';
+  if(x===b&&y===a)h='分けるもの|（クッキー|ぜんぶの数）が|先だよ';
+  else if(x===a)h=k==='group'?`${b}こずつだから、|わる数は${b}`:`${b}人で|分けるから、|わる数は${b}`;
+  else if(y===b)h=`クッキーは|ぜんぶで${a}こ。|わられる数は${a}`;
+  setMsg(jp(h),true);
   later(resetTiles,700);
 }
 function startKotae(kind){
@@ -297,8 +298,8 @@ function startKotae(kind){
   el.innerHTML=`<div class="eqrow" id="bRow">${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,kind==='group'?'c-cookie':'c-plate',kind==='group'?'1人分':'人')}<span class="op">=</span>${slots}</div>`+
     `<div class="tiles keypad">${[0,1,2,3,4,5,6,7,8,9,10].map(v=>`<button class="tile" onclick="putAns(${v})">${v}</button>`).join('')}</div>`+
     (kind==='amari'?'':`<div class="tiles units"><button class="tile" onclick="putUnit('こ')">こ</button><button class="tile" onclick="putUnit('人')">人</button></div>`);
-  setStatus(kind==='amari'?'1人分は何こ？あまりは何こ？':(kind==='group'?'何人に分けられた？':'1人分は何こ？'));
-  setMsg(kind==='amari'?'図をかぞえて、数字をおそう':'数字と、「こ」か「人」かをえらぼう');setButtons([]);
+  setStatus(jp(kind==='amari'?'1人分は|何こ？|あまりは|何こ？':(kind==='group'?'何人に|分けられた？':'1人分は|何こ？')));
+  setMsg(jp(kind==='amari'?'図を|かぞえて、|数字を|おそう':'数字と、|「こ」か|「人」かを|えらぼう'));setButtons([]);
 }
 function putAns(v){if(J.phase!=='kotae')return;const i=J.ans[0]===null?0:(J.kind==='amari'&&J.ans[1]===null?1:-1);if(i<0)return;J.ans[i]=v;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
 function putUnit(u){if(J.phase!=='kotae'||J.kind==='amari')return;J.unit=u;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
@@ -315,12 +316,12 @@ function maybeCheckKotae(){
 }
 function checkKotae(){
   const k=J.kind;let ok,hint;
-  if(k==='deal'){ok=J.ans[0]===D.q&&J.unit==='こ';if(J.ans[0]!==D.q){hint='おさらのクッキーをかぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else hint='1人分はクッキーの数だから「こ」';}
-  else if(k==='group'){ok=J.ans[0]===G.n&&J.unit==='人';if(J.ans[0]!==G.n){hint='人をかぞえてみよう';pulseSel('#persons .person');}else hint='何人に分けられたか、だから「人」';}
-  else{ok=J.ans[0]===D.q&&J.ans[1]===D.r;if(J.ans[0]!==D.q){hint='おさらのクッキーをかぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else{hint='おぼんにのこったクッキーは何こ？';pulseSel('#cookies .ck[data-fit-in="tray"]');}}
+  if(k==='deal'){ok=J.ans[0]===D.q&&J.unit==='こ';if(J.ans[0]!==D.q){hint='おさらの|クッキーを|かぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else hint='1人分は|クッキーの数だから|「こ」';}
+  else if(k==='group'){ok=J.ans[0]===G.n&&J.unit==='人';if(J.ans[0]!==G.n){hint='人を|かぞえてみよう';pulseSel('#persons .person');}else hint='何人に|分けられたか、|だから「人」';}
+  else{ok=J.ans[0]===D.q&&J.ans[1]===D.r;if(J.ans[0]!==D.q){hint='おさらの|クッキーを|かぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else{hint='おぼんに|のこった|クッキーは|何こ？';pulseSel('#cookies .ck[data-fit-in="tray"]');}}
   if(ok){J.phase='done';if(k==='group')finishGroupUI(true);else finishDealUI(true);return;}
   sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
-  setMsg(hint,true);
+  setMsg(jp(hint),true);
   later(()=>{J.ans=[null,null];J.unit=null;renderAns();},700);
 }
 
@@ -456,6 +457,7 @@ function setButtons(list){
 function showNext(last){$('nextrow').hidden=false;$('nextBtn').textContent=last?'さいしょから ▶':'つぎへ ▶';}
 function markCleared(){S.cleared[S.stage]=true;renderBand();}
 function numCtl(key,val,cls){return `<span class="numctl"><button class="pm" onclick="adjust('${key}',-1)" aria-label="へらす">−</button><b class="num ${cls}">${val}</b><button class="pm" onclick="adjust('${key}',1)" aria-label="ふやす">＋</button></span>`;}
+function jp(s){return s.split('|').map(t=>t?`<span class="w">${t}</span>`:'').join('');}   // | が折り返してよい場所
 function qHTML(sentence,ctls){return `<div class="q">${sentence}</div>${ctls?`<div class="ctl"><span class="u">数をかえる</span>${ctls}</div>`:''}`;}
 function chip(v,cls,lab,key){return `<span class="chip ${cls}" ${key?`onclick="hl('${key}')"`:''}>${v}<small>${lab||''}</small></span>`;}
 
@@ -485,7 +487,7 @@ function buildDeal(a,b,amari){
   drawTray(a);makeCookies(a);
   for(let i=0;i<b;i++)drawPerson($('persons'),i,b,LMAIN,'p'+i);
   const key=amari?'5':'1';
-  $('qcard').innerHTML=qHTML(`クッキー<b class="c-cookie">${a}</b>こを<b class="c-plate">${b}</b>人で同じ数ずつ分けます。<br>1人分は何こ？`,
+  $('qcard').innerHTML=qHTML(jp(`クッキー<b class="c-cookie">${a}</b>こを|<b class="c-plate">${b}</b>人で|同じ数ずつ|分けます。<br>1人分は|何こ？`),
     `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span>`);
   setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
   if(jibun())startShiki(amari?'amari':'deal');else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
@@ -516,7 +518,7 @@ function afterLand(){
   counts.forEach((c,i)=>drawBubble(i,b,LMAIN,c+'こ',COL.amber));
   $('persons').classList.add('shake');sfxWrong();
   setStatus('同じ数ずつになっていない！');
-  setMsg(`${b}人にもう1こずつくばるには${b}こいる。<br>${D.r}こではたりない。`,true);
+  setMsg(jp(`${b}人に|もう1こずつ|くばるには|${b}こいる。<br>${D.r}こでは|たりない。`),true);
   setButtons([{text:'1こくばる',fn:dealOne,disabled:true}]);
   const back=()=>{
     $('persons').classList.remove('shake');
@@ -538,13 +540,13 @@ function finishDealUI(self){
   setButtons([]);
   const sei=self?'せいかい！':'';
   if(!amari||r===0){
-    setStatus(`${sei}1人分は<b class="c-cookie">${q}</b>こ！${amari?'あまりはなし':''}`);
+    setStatus(jp(`${sei}1人分は|<b class="c-cookie">${q}</b>こ！${amari?'|あまりはなし':''}`));
     $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}</div><div class="read">${a}わる${b}は${q}</div>`;
-    setMsg(amari?`ぴったり分けられた！あまりは0。`:(self?`しきの数をおすと、図のどこかわかるよ。`:`このことを<b>${a} ÷ ${b} = ${q}</b>とかきます。<br>しきの数をおすと、図のどこかわかるよ。`));
+    setMsg(jp(amari?`ぴったり|分けられた！|あまりは0。`:(self?`しきの数を|おすと、|図のどこか|わかるよ。`:`このことを|<b>${a} ÷ ${b} = ${q}</b>と|かきます。<br>しきの数を|おすと、|図のどこか|わかるよ。`)));
   }else{
-    setStatus(`${sei}1人分は<b class="c-cookie">${q}</b>こ、<b class="c-cookie">${r}</b>こあまる！`);
+    setStatus(jp(`${sei}1人分は|<b class="c-cookie">${q}</b>こ、|<b class="c-cookie">${r}</b>こあまる！`));
     $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}<span class="grp"><span class="amari">あまり</span>${chip(r,'c-cookie','あまり','rest')}</span></div><div class="read">${a}わる${b}は${q}あまり${r}</div>`;
-    setMsg(`もう1こずつくばるには${b}こいる。<br>${r}こではたりない。<br>だから、あまり<b class="c-cookie">${r}</b>はわる数<b class="c-plate">${b}</b>より小さい。`);
+    setMsg(jp(`もう1こずつ|くばるには|${b}こいる。<br>${r}こでは|たりない。<br>だから、|あまり<b class="c-cookie">${r}</b>は|わる数<b class="c-plate">${b}</b>より|小さい。`));
   }
   $('eq').hidden=false;markCleared();showNext(amari);updateBack();
 }
@@ -554,7 +556,7 @@ let G={a:12,k:3,n:4};
 function buildGroup(){
   const {a,k}=P[2];G={a,k,n:a/k};
   drawTray(a);makeCookies(a);
-  $('qcard').innerHTML=qHTML(`クッキー<b class="c-cookie">${a}</b>こを1人に<b class="c-cookie">${k}</b>こずつ分けます。<br>何人に分けられる？`,
+  $('qcard').innerHTML=qHTML(jp(`クッキー<b class="c-cookie">${a}</b>こを|1人に|<b class="c-cookie">${k}</b>こずつ|分けます。<br>何人に|分けられる？`),
     `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('k',k,'c-cookie')}<span class="u">こずつ</span></span>`);
   setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
   if(jibun())startShiki('group');else setButtons([{text:`${k}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);
@@ -571,7 +573,7 @@ function takeGroup(){
     const to=plateSlot(p,G.n,j,G.k,LMAIN);
     later(()=>tween(c,to,420,()=>{if(--left===0){S.busy=false;sfxLand();afterGroup();}}),j*90);
   }
-  setStatus(`のこり<b class="c-cookie">${trayCookies().length}</b>こ ／ <b class="c-plate">${S.persons}</b>人め`);
+  setStatus(jp(`のこり<b class="c-cookie">${trayCookies().length}</b>こ|／ <b class="c-plate">${S.persons}</b>人め`));
   updateBack();
 }
 function afterGroup(){
@@ -583,10 +585,10 @@ function afterGroup(){
 function finishGroupUI(self){
   sfxDone();const {a,k,n}=G;
   if(self){clear($('bubbles'));for(let i=0;i<n;i++)drawBubble(i,n,LMAIN,String(i+1),COL.plateT);}
-  setStatus(`${self?'せいかい！':''}<b class="c-plate">${n}</b>人に分けられた！`);
+  setStatus(jp(`${self?'せいかい！|':''}<b class="c-plate">${n}</b>人に|分けられた！`));
   $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(k,'c-cookie','1人分','perplate')}<span class="op">=</span>${chip(n,'c-plate','人','persons')}</div><div class="read">${a}わる${k}は${n}</div>`;
   $('eq').hidden=false;
-  setMsg(`これも<b>${a} ÷ ${k} = ${n}</b>。<br>①と同じしきなのに、答えは「人」！`);
+  setMsg(jp(`これも|<b>${a} ÷ ${k} = ${n}</b>。<br>①と|同じしきなのに、|答えは「人」！`));
   markCleared();showNext(false);updateBack();
 }
 
@@ -624,7 +626,7 @@ function pick(row,v,btn){
   if(S.ans[row]!==null)return;
   const right=row===0?'ko':'nin';
   if(v!==right){btn.classList.remove('miss');void btn.offsetWidth;btn.classList.add('miss');sfxWrong();
-    setMsg(row===0?`図の上を見て。<br>1人のおさらにクッキーは何こ？`:`図の下を見て。<br>おさらはいくつある？`,true);
+    setMsg(jp(row===0?`図の上を|見て。<br>1人のおさらに|クッキーは|何こ？`:`図の下を|見て。<br>おさらは|いくつある？`),true);
     pulseSel(row===0?'#cmpTop .ck[data-fit-in="t0"]':'#cmpBot .person');return;}
   S.ans[row]=v;btn.classList.add('hit');sfxLand();
   btn.parentElement.querySelectorAll('button').forEach(b=>{b.disabled=true;});
@@ -635,7 +637,7 @@ function pick(row,v,btn){
   setMsg('');
   if(S.ans[0]!==null&&S.ans[1]!==null){
     S.done=true;sfxDone();setStatus('せいかい！');
-    setMsg(`同じしきでも、<b class="c-plate">${b}</b>と<b class="c-cookie">${b}</b>、<b class="c-cookie">${q}</b>と<b class="c-plate">${q}</b>のいみがちがう！`);
+    setMsg(jp(`同じしきでも、|<b class="c-plate">${b}</b>と<b class="c-cookie">${b}</b>、|<b class="c-cookie">${q}</b>と<b class="c-plate">${q}</b>の|いみがちがう！`));
     markCleared();showNext(false);
   }else setStatus('もうひとつもえらぼう');
   updateBack();
@@ -652,9 +654,9 @@ function buildKake(){
     const t=plateSlot(i,b,j,q,LMAIN);
     const e=el('g',{class:'ck dim','data-fit-in':'p'+i,'data-slot':j,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},g);drawCookie(e);
   }
-  $('qcard').innerHTML=qHTML(`<b class="c-plate">${b}</b>人に同じ数ずつ分けたら、ぜんぶで<b class="c-cookie">${a}</b>こ。1人分は何こ？`,
+  $('qcard').innerHTML=qHTML(jp(`<b class="c-plate">${b}</b>人に|同じ数ずつ|分けたら、|ぜんぶで<b class="c-cookie">${a}</b>こ。<br>1人分は|何こ？`),
     `<span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span><span class="sep"></span><span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span>`);
-  setStatus(`<b class="c-plate">${b}</b>のだんをおしてさがそう`);
+  setStatus(jp(`<b class="c-plate">${b}</b>のだんを|おして|さがそう`));
   setButtons([]);
   $('eq').innerHTML=`<div class="eqrow">${chip(b,'c-plate','人')}<span class="op">×</span>${chip('□','blank','1人分')}<span class="op">=</span>${chip(a,'c-cookie','ぜんぶ')}</div>`;
   $('eq').hidden=false;
@@ -674,10 +676,10 @@ function light(k,btn){
     S.done=true;btn.classList.add('hit');sfxDone();
     setStatus(`<b class="c-plate">${b}</b> × <b class="c-cookie">${k}</b> = <b class="c-cookie">${a}</b>！`);
     $('eq').innerHTML+=`<div class="eqrow" style="margin-top:8px">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(k,'c-cookie','1人分','perplate')}</div>`;
-    setMsg(`${b} × ${k} = ${a}だから、${a} ÷ ${b} = ${k}。<br>わり算の答えはかけ算でさがせる！`);
+    setMsg(jp(`${b} × ${k} = ${a}だから、|${a} ÷ ${b} = ${k}。<br>わり算の答えは|かけ算で|さがせる！`));
     markCleared();showNext(false);
-  }else if(tot<a){setStatus(`${b} × ${k} = ${tot}。まだ${a}にたりない`);setMsg('');}
-  else{setStatus(`${b} × ${k} = ${tot}。${a}をこえた`);setMsg('');}
+  }else if(tot<a){setStatus(jp(`${b} × ${k} = ${tot}。|まだ${a}に|たりない`));setMsg('');}
+  else{setStatus(jp(`${b} × ${k} = ${tot}。|${a}を|こえた`));setMsg('');}
   updateBack();
 }
 
