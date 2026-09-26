@@ -8,7 +8,7 @@
     ["2 できた", "window.__instant=true; setMode('mite'); goStage(1); takeGroup(); takeGroup(); takeGroup(); takeGroup()"],
     ["3 はじめ", "window.__instant=true; setMode('mite'); goStage(2)"],
     ["3 まちがい", "window.__instant=true; setMode('mite'); goStage(2); pick(0,'nin',document.querySelectorAll('#cmp0 .pick button')[1])"],
-    ["3 できた", "window.__instant=true; setMode('mite'); goStage(2); pick(0,'ko',document.querySelectorAll('#cmp0 .pick button')[0]); pick(1,'nin',document.querySelectorAll('#cmp1 .pick button')[1])"],
+    ["3 できた", "window.__instant=true; setMode('mite'); goStage(2); pick(0,'ko',document.querySelectorAll('#cmp0 .pick button')[0]); pick(1,'fukuro',document.querySelectorAll('#cmp1 .pick button')[1])"],
     ["4 はじめ", "window.__instant=true; setMode('mite'); goStage(3)"],
     ["4 3×2", "window.__instant=true; setMode('mite'); goStage(3); light(2,document.querySelectorAll('#strip button')[1])"],
     ["4 できた", "window.__instant=true; setMode('mite'); goStage(3); light(4,document.querySelectorAll('#strip button')[3])"],

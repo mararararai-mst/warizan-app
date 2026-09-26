@@ -28,8 +28,8 @@
     background:
       radial-gradient(circle at 10% 16%, #fff1c9 0 70px, transparent 71px),
       radial-gradient(circle at 90% 10%, #d9efff 0 70px, transparent 71px),
-      radial-gradient(circle at 82% 90%, #ffe3ee 0 90px, transparent 91px),
-      linear-gradient(160deg,#fffaf3,#eef8ff);
+      radial-gradient(circle at 82% 90%, #ffe3ee 0 90px, transparent 91px);
+    background-color:#FFF7EA;
     display:flex;flex-direction:column;overflow:hidden;
     user-select:none;-webkit-user-select:none;touch-action:manipulation;
   }
@@ -70,15 +70,17 @@
 
   .qcard{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:12px 14px;font-family:var(--font-body);font-weight:700;font-size:clamp(16px,1.4vw,19px);line-height:1.75;text-align:center;text-wrap:pretty}
   .qcard b{font-family:var(--font-head);font-size:1.15em}
-  .qcard .ctl{display:flex;justify-content:center;align-items:center;gap:4px 8px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:2px dashed #f0e6dc;font-family:var(--font-head);line-height:1.2}
-  .qcard .ctl .u{font-size:12px;color:var(--ink-l);white-space:nowrap} .qcard .ctl .sep{width:0;height:24px;border-left:2px solid #e5dcd3}
-  .qcard .ctl .cg{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
-  .numctl{display:inline-flex;align-items:center;vertical-align:middle;gap:1px;background:var(--paper);border-radius:14px;padding:0 1px}
-  .numctl .num{font-family:var(--font-head);font-size:22px;min-width:1.2em;text-align:center;line-height:1.1}
-  .pm{width:32px;height:32px;border-radius:10px;font-size:20px;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.10);line-height:1}
+  .qcard .ctl{display:flex;justify-content:center;align-items:center;gap:6px 8px;flex-wrap:wrap;margin-top:9px;padding-top:8px;border-top:2px dashed #f0e6dc;font-family:var(--font-head);line-height:1.2}
+  .numctl{display:inline-flex;align-items:center;vertical-align:middle;gap:3px;background:#fff;border:2px solid #efe7df;border-radius:16px;padding:3px}
+  .numctl.c-cookie{border-color:#f0d3b4;background:var(--cookie-l)}
+  .numctl.c-plate{border-color:#bfdcf2;background:var(--plate-l)}
+  .numctl .num{font-family:var(--font-head);font-size:22px;min-width:2.1em;text-align:center;line-height:1.15;white-space:nowrap}
+  .numctl .num .un{font-size:.62em}
+  .pm{width:32px;height:32px;border-radius:11px;font-size:21px;background:#fff;box-shadow:0 2px 0 rgba(0,0,0,.12);line-height:1}
   .pm:active{transform:translateY(2px)}
 
-  .status{text-align:center;font-size:clamp(16px,1.5vw,20px);min-height:1.5em;line-height:1.5;text-wrap:pretty}
+  .status{text-align:center;font-size:clamp(16px,1.5vw,20px);min-height:1.5em;line-height:1.5;text-wrap:pretty;margin-top:10px}
+  .status .arw{display:block;color:var(--ink-l);font-size:22px;line-height:1.35}
   .btnrow{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
   .go{font-size:clamp(18px,1.8vw,24px);padding:12px 26px;border-radius:18px;color:#fff;background:var(--cookie);box-shadow:0 5px 0 rgba(0,0,0,.15);min-height:48px}
   .go.blue{background:var(--plate)} .go.sub{background:#fff;color:var(--ink);font-size:15px;padding:10px 14px;min-height:40px}
@@ -89,16 +91,17 @@
   .eq{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:10px 12px 8px;animation:rise .4s backwards}
   .eqrow{display:flex;align-items:flex-start;justify-content:center;gap:6px;flex-wrap:wrap;row-gap:8px}
   .grp{display:flex;align-items:flex-start;gap:6px}
+  .eq2{margin-top:8px}
   .amari{white-space:nowrap}
   .chip{display:flex;flex-direction:column;align-items:center;min-width:2.2em;padding:4px 8px 2px;border-radius:14px;background:var(--paper);border:3px solid #eee;font-size:clamp(26px,2.4vw,34px);line-height:1;cursor:pointer}
-  .chip small{font-size:12px;line-height:1.2;margin-top:3px;color:var(--ink-l);font-weight:700;white-space:nowrap}
+  .chip small{font-size:13px;line-height:1.2;margin-top:3px;color:var(--ink-l);font-weight:700;white-space:nowrap}
   .chip.c-cookie{border-color:var(--cookie);background:var(--cookie-l)} .chip.c-plate{border-color:var(--plate);background:var(--plate-l)}
   .chip.c-cookie small{color:var(--cookie)} .chip.c-plate small{color:var(--plate)}
   .chip.blank{color:var(--ink-l);border-style:dashed}
   .chip:active{transform:scale(.96)}
   .op{font-size:clamp(24px,2.2vw,30px);line-height:1;padding-top:8px;color:var(--ink-l)}
   .amari{font-size:16px;padding-top:12px;color:var(--ink-l)}
-  .read{text-align:center;font-size:15px;color:var(--ink-l);margin-top:6px}
+  .read{text-align:center;font-size:16px;color:#7a6c65;margin-top:7px}
   .msg{text-align:center;font-family:var(--font-body);font-weight:700;font-size:clamp(15px,1.3vw,17px);line-height:1.6;min-height:1.6em;text-wrap:pretty}
   .msg.warn{color:#d04a4a}
   .w{white-space:nowrap}   /* 文節。ここでは切れない＝折り返しは文節の境目だけ */
@@ -171,6 +174,15 @@
   @media (max-height:820px) and (min-width:901px){
     header{padding:6px 16px 2px} nav.band{padding:2px 14px 6px}
     .side{gap:6px} .qcard{padding:8px 12px;line-height:1.6} .eq{padding:8px 10px 6px} .chip{font-size:28px}
+    .qcard .ctl{margin-top:7px;padding-top:7px} .numctl .num{font-size:20px}
+    .status{margin-top:7px} .status .arw{font-size:19px;line-height:1.2}
+    .go.sub{min-height:34px;padding:6px 12px;font-size:14px}
+    .strip button{min-height:32px;padding:4px 3px}
+    .next{min-height:42px;padding:9px 26px}
+    .read{margin-top:5px;font-size:15px}
+    .chip{font-size:26px} .eq2{margin-top:4px} .strip{gap:5px} .msg{line-height:1.45}
+    .chip small{font-size:12px;margin-top:2px} .eq{padding:5px 10px 4px} .btnrow{gap:5px}
+    .next{min-height:40px;padding:8px 26px} .qcard{line-height:1.5} .msg{line-height:1.4}
     .msg{line-height:1.5} .strip{gap:5px}
   }
 </style>
@@ -211,7 +223,7 @@
    色のやくそく：クッキーの数＝だいだい / 人の数＝あお（図・しき・ことば全部同じ）
    ========================================================= */
 const NS='http://www.w3.org/2000/svg';
-const COL={cookie:'#f0a850',cookieD:'#c9772a',choc:'#6b3e22',plate:'#3b9fe0',plateL:'#bfe6ff',plateT:'#1f7fc4',tray:'#f3dcb8',trayD:'#d3a86f',skin:'#ffe0c2',skinD:'#d9a37a',ink:'#4a3f3a',amber:'#c9651a'};   // amber/plateT＝文字用（CSSの --cookie/--plate と同じ）
+const COL={cookie:'#f0a850',cookieD:'#c9772a',choc:'#6b3e22',plate:'#3b9fe0',plateL:'#bfe6ff',plateT:'#1f7fc4',tray:'#f3dcb8',trayD:'#d3a86f',skin:'#FFD9B8',skinD:'#d9a37a',ink:'#4a3f3a',amber:'#c9651a'};   // amber/plateT＝文字用（CSSの --cookie/--plate と同じ）
 const HAIR=['#5a3a2a','#e0b34a','#8a5a3a','#3a3a5a','#c05a4a'];
 const SHIRT=['#ffd1e3','#bfe6ff','#cdeeb6','#fff0a8','#e3d4ff'];
 const STAGES=[
@@ -252,7 +264,7 @@ function startShiki(kind){
   J={phase:'shiki',slots:[null,null],ans:[null,null],unit:null,kind};
   const {a,b}=jNums(),q=Math.floor(a/b);
   const tiles=shuffle([a,b,q,a+b].filter((v,i,arr)=>arr.indexOf(v)===i));
-  setStatus(jp('しきを|作ろう'));setButtons([]);
+  setStatus(jp('しきを|作ろう'),1);setButtons([]);
   const el=$('eq');el.hidden=false;
   el.innerHTML=`<div class="eqrow" id="bRow"><span class="chip slot" onclick="clearSlot(0)">□</span><span class="op">÷</span><span class="chip slot" onclick="clearSlot(1)">□</span><span class="op">=</span><span class="chip blank">？</span></div><div class="tiles">${tiles.map(v=>`<button class="tile" onclick="putTile(${v},this)">${v}</button>`).join('')}</div>`;
   setMsg(jp('数字を|おして、|□に|入れよう'));
@@ -276,14 +288,14 @@ function checkShiki(){
     J.phase='deal';sfxLand();
     const s=$('bRow').querySelectorAll('.slot');s[0].classList.add('c-cookie');s[1].classList.add(k==='group'?'c-cookie':'c-plate');
     const t=$('eq').querySelector('.tiles');if(t)t.remove();
-    setStatus(jp(`○ ${a}÷${b}。|くばって|たしかめよう`));setMsg('');
+    setStatus(jp(`${k==='group'?'いれて':'くばって'}|たしかめよう`),1);setMsg(jp('○ しきが|できた！'));
     if(k==='group')setButtons([{text:`${b}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
     return;
   }
   sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
   let h='図を見て、|もういちど';
   if(x===b&&y===a)h='分けるもの|（クッキー|ぜんぶの数）が|先だよ';
-  else if(x===a)h=k==='group'?`${b}こずつだから、|わる数は${b}`:`${b}人で|分けるから、|わる数は${b}`;
+  else if(x===a)h=k==='group'?`1ふくろ${b}こずつだから、|わる数は${b}`:`${b}人で|分けるから、|わる数は${b}`;
   else if(y===b)h=`クッキーは|ぜんぶで${a}こ。|わられる数は${a}`;
   setMsg(jp(h),true);
   later(resetTiles,700);
@@ -295,11 +307,12 @@ function startKotae(kind){
     ?`<span class="chip slot ans" onclick="clearAns(0)">□<small>1人分</small></span><span class="grp"><span class="amari">あまり</span><span class="chip slot ans" onclick="clearAns(1)">□<small>あまり</small></span></span>`
     :`<span class="chip slot ans" onclick="clearAns(0)">□</span><span class="chip slot unit" onclick="clearUnit()">□</span>`;
   const el=$('eq');el.hidden=false;
-  el.innerHTML=`<div class="eqrow" id="bRow">${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,kind==='group'?'c-cookie':'c-plate',kind==='group'?'1人分':'人')}<span class="op">=</span>${slots}</div>`+
+  const u2=kind==='group'?'ふくろ':'人';
+  el.innerHTML=`<div class="eqrow" id="bRow">${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,kind==='group'?'c-cookie':'c-plate',kind==='group'?'1ふくろ分':'人')}<span class="op">=</span>${slots}</div>`+
     `<div class="tiles keypad">${[0,1,2,3,4,5,6,7,8,9,10].map(v=>`<button class="tile" onclick="putAns(${v})">${v}</button>`).join('')}</div>`+
-    (kind==='amari'?'':`<div class="tiles units"><button class="tile" onclick="putUnit('こ')">こ</button><button class="tile" onclick="putUnit('人')">人</button></div>`);
-  setStatus(jp(kind==='amari'?'1人分は|何こ？|あまりは|何こ？':(kind==='group'?'何人に|分けられた？':'1人分は|何こ？')));
-  setMsg(jp(kind==='amari'?'図を|かぞえて、|数字を|おそう':'数字と、|「こ」か|「人」かを|えらぼう'));setButtons([]);
+    (kind==='amari'?'':`<div class="tiles units"><button class="tile" onclick="putUnit('こ')">こ</button><button class="tile" onclick="putUnit('${u2}')">${u2}</button></div>`);
+  setStatus(jp(kind==='amari'?'1人分は|何こ？|あまりは|何こ？':(kind==='group'?'ふくろは|いくつ|できた？':'1人分は|何こ？')),1);
+  setMsg(jp(kind==='amari'?'図を|かぞえて、|数字を|おそう':`数字と、|「こ」か|「${u2}」かを|えらぼう`));setButtons([]);
 }
 function putAns(v){if(J.phase!=='kotae')return;const i=J.ans[0]===null?0:(J.kind==='amari'&&J.ans[1]===null?1:-1);if(i<0)return;J.ans[i]=v;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
 function putUnit(u){if(J.phase!=='kotae'||J.kind==='amari')return;J.unit=u;renderAns();sfxDeal();updateBack();maybeCheckKotae();}
@@ -317,7 +330,7 @@ function maybeCheckKotae(){
 function checkKotae(){
   const k=J.kind;let ok,hint;
   if(k==='deal'){ok=J.ans[0]===D.q&&J.unit==='こ';if(J.ans[0]!==D.q){hint='おさらの|クッキーを|かぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else hint='1人分は|クッキーの数だから|「こ」';}
-  else if(k==='group'){ok=J.ans[0]===G.n&&J.unit==='人';if(J.ans[0]!==G.n){hint='人を|かぞえてみよう';pulseSel('#persons .person');}else hint='何人に|分けられたか、|だから「人」';}
+  else if(k==='group'){ok=J.ans[0]===G.n&&J.unit==='ふくろ';if(J.ans[0]!==G.n){hint='ふくろを|かぞえてみよう';pulseSel('#persons .bag');}else hint='ふくろが|いくつできたか、|だから「ふくろ」';}
   else{ok=J.ans[0]===D.q&&J.ans[1]===D.r;if(J.ans[0]!==D.q){hint='おさらの|クッキーを|かぞえてみよう';pulseSel('#cookies .ck[data-fit-in="p0"]');}else{hint='おぼんに|のこった|クッキーは|何こ？';pulseSel('#cookies .ck[data-fit-in="tray"]');}}
   if(ok){J.phase='done';if(k==='group')finishGroupUI(true);else finishDealUI(true);return;}
   sfxWrong();const row=$('bRow');row.classList.remove('miss');void row.offsetWidth;row.classList.add('miss');
@@ -380,6 +393,32 @@ function extraSlot(idx,n,q){                 // ⑤同じ数をこえた1こ＝�
   const g=personGeom(idx,n,LMAIN),rows=q>5?2:1;
   return {x:g.cx,y:g.plateY-24-rows*g.cell*.85,s:(g.cell*.42)/30};
 }
+const BAG={w:150};
+function bagGeom(idx,n,L,k){             // 高さは中身の数で決める（上が空いて間延びしないように）
+  const g=personGeom(idx,n,L), w=Math.min(BAG.w,g.pw-4);
+  const h=Math.max(130,Math.min(L.bagMaxH||300, 60+62*(k||3)));
+  const bottom=(L.bagCy!==undefined)?L.bagCy+h/2:L.plateY+26;
+  const cell=Math.min(62,(h-40)/Math.max(k||3,1),(w-24)/.94);
+  return {cx:g.cx,w,h,bottom,top:bottom-h,cell,topW:w*.80};
+}
+function bagSlot(idx,n,slot,k,L){            // ふくろの中は下から積む（入った量が見える）
+  const b=bagGeom(idx,n,L,k);
+  return {x:b.cx,y:b.bottom-18-b.cell*slot-b.cell/2,s:(b.cell*.94)/60};
+}
+function drawBag(parent,idx,n,L,tag,k){
+  const b=bagGeom(idx,n,L,k),cx=b.cx,t=b.top,bo=b.bottom,bw=b.w,tw=b.topW;
+  const g=el('g',{class:'bag','data-p':tag},parent);
+  const inn=el('g',{class:'in'},g);
+  el('rect',{x:cx-bw/2-8,y:t-10,width:bw+16,height:b.h+18,rx:18,fill:'none',stroke:'none',class:'zone','data-fit':tag},inn);
+  /* 紙ぶくろ：口はギザギザに切ってある／下は広くて底は角丸（カップ・ゴミ箱に見せない） */
+  const M=5,dy=11;let d=`M${cx-tw/2},${t+dy}`;
+  for(let i=0;i<M;i++){const x0=cx-tw/2+tw*i/M;d+=` L${x0+tw/(2*M)},${t} L${x0+tw/M},${t+dy}`;}
+  d+=` L${cx+bw/2},${bo-18} Q${cx+bw/2},${bo} ${cx+bw/2-18},${bo} L${cx-bw/2+18},${bo} Q${cx-bw/2},${bo} ${cx-bw/2},${bo-18} Z`;
+  el('path',{d,fill:'#fff',stroke:COL.plate,'stroke-width':5,'stroke-linejoin':'round'},inn);
+  /* 口の内がわ（ギザギザの谷の下に細い帯）＝開いている袋に見せる */
+  el('rect',{x:cx-tw/2+7,y:t+dy+2,width:tw-14,height:13,rx:3,fill:COL.plateL},inn);
+  return g;
+}
 function drawPerson(parent,idx,n,L,tag){
   const g=personGeom(idx,n,L);
   const p=el('g',{class:'person','data-p':tag},parent);
@@ -395,16 +434,17 @@ function drawPerson(parent,idx,n,L,tag){
   el('ellipse',{cx:g.cx,cy:g.plateY,rx:g.pw/2*.72,ry:18,fill:'none',stroke:COL.plateL,'stroke-width':3},inn);
   return p;
 }
-function drawBubble(idx,n,L,text,color){
-  const g=personGeom(idx,n,L);
+function drawBubble(idx,n,L,text,color,baseY){   // baseY 省略＝人の顔の上／ふくろは口の上
+  const g=personGeom(idx,n,L), y=baseY===undefined?g.faceY:baseY;
   const b=el('g',{class:'bubble','data-p':'p'+idx},$('bubbles'));
   const w=Math.max(64,text.length*30+20);
-  el('rect',{x:g.cx-w/2,y:g.faceY-92,width:w,height:40,rx:14,fill:'#fff',stroke:color,'stroke-width':4},b);
-  el('path',{d:`M${g.cx-8},${g.faceY-52} l8,10 l8,-10z`,fill:'#fff',stroke:color,'stroke-width':4,'stroke-linejoin':'round'},b);
-  el('rect',{x:g.cx-10,y:g.faceY-56,width:20,height:6,fill:'#fff'},b);
-  el('text',{x:g.cx,y:g.faceY-63,'text-anchor':'middle','font-size':28,fill:color},b).textContent=text;
+  el('rect',{x:g.cx-w/2,y:y-92,width:w,height:40,rx:14,fill:'#fff',stroke:color,'stroke-width':4},b);
+  el('path',{d:`M${g.cx-8},${y-52} l8,10 l8,-10z`,fill:'#fff',stroke:color,'stroke-width':4,'stroke-linejoin':'round'},b);
+  el('rect',{x:g.cx-10,y:y-56,width:20,height:6,fill:'#fff'},b);
+  el('text',{x:g.cx,y:y-63,'text-anchor':'middle','font-size':28,fill:color},b).textContent=text;
   return b;
 }
+function bagBubble(idx,n,L,text,color,k){ return drawBubble(idx,n,L,text,color,bagGeom(idx,n,L,k).top+22); }
 function makeCookies(n){
   const g=$('cookies');clear(g);S.cookies=[];
   for(let i=0;i<n;i++){
@@ -439,7 +479,7 @@ function goBack(){
   else if(S.stage>0)goStage(S.stage-1);
 }
 function hasProgress(){return S.dealt>0||S.persons>0||S.lit>0||S.ans[0]!==null||S.ans[1]!==null||S.done||J.slots.some(v=>v!==null)||J.ans.some(v=>v!==null)||J.phase==='deal';}
-function updateBack(){$('navBackBtn').disabled=!(hasProgress()||S.stage>0);}
+function updateBack(){$('navBackBtn').disabled=!(hasProgress()||S.stage>0);syncRetry();}
 function renderBand(){
   const b=$('band');b.innerHTML='';
   STAGES.forEach((st,i)=>{
@@ -448,17 +488,39 @@ function renderBand(){
     btn.onclick=()=>goStage(i);b.appendChild(btn);
   });
 }
-function setStatus(h){$('status').innerHTML=h;}
+function setStatus(h,step){$('status').innerHTML=(step?'<span class="arw">↓</span>':'')+h;}
 function setMsg(h,warn){const m=$('msg');m.innerHTML=h;m.classList.toggle('warn',!!warn);}
 function setButtons(list){
   const r=$('btnrow');r.innerHTML='';
   list.forEach(b=>{const e=document.createElement('button');e.className='go'+(b.cls?' '+b.cls:'');e.id=b.id||'';e.textContent=b.text;e.onclick=b.fn;if(b.disabled)e.disabled=true;r.appendChild(e);});
+  syncRetry();
+}
+function syncRetry(){                       // 進んでいるときだけ「もう1回」を出す
+  const r=$('btnrow');let b=$('retryBtn');
+  if(hasProgress()){
+    if(!b){b=document.createElement('button');b.className='go sub';b.id='retryBtn';b.textContent='もう1回';b.onclick=()=>goStage(S.stage);r.appendChild(b);}
+  }else if(b)b.remove();
+}
+/* じぶんで入れた答えを消さない＝式カードを作り直さず、入れた枠をそのまま残す */
+function keepAns(labels,cls){
+  document.querySelectorAll('#eq .tiles').forEach(e=>e.remove());
+  const slots=[...document.querySelectorAll('#bRow .chip.slot')];
+  slots.forEach((e,i)=>{
+    e.classList.remove('slot','blank');e.classList.add(cls||'c-cookie');
+    const lab=labels[i]; if(lab!==undefined){let sm=e.querySelector('small');if(!sm){sm=document.createElement('small');e.appendChild(sm);}sm.textContent=lab;}
+  });
+  return slots.length>0;
+}
+function setRead(txt){
+  const eq=$('eq');let r=eq.querySelector('.read');
+  if(!r){r=document.createElement('div');r.className='read';eq.appendChild(r);}
+  r.textContent=txt;
 }
 function showNext(last){$('nextrow').hidden=false;$('nextBtn').textContent=last?'さいしょから ▶':'つぎへ ▶';}
 function markCleared(){S.cleared[S.stage]=true;renderBand();}
-function numCtl(key,val,cls){return `<span class="numctl"><button class="pm" onclick="adjust('${key}',-1)" aria-label="へらす">−</button><b class="num ${cls}">${val}</b><button class="pm" onclick="adjust('${key}',1)" aria-label="ふやす">＋</button></span>`;}
+function numCtl(key,val,cls,unit){return `<span class="numctl ${cls}"><button class="pm" onclick="adjust('${key}',-1)" aria-label="へらす">−</button><b class="num ${cls}">${val}<span class="un">${unit}</span></b><button class="pm" onclick="adjust('${key}',1)" aria-label="ふやす">＋</button></span>`;}
 function jp(s){return s.split('|').map(t=>t?`<span class="w">${t}</span>`:'').join('');}   // | が折り返してよい場所
-function qHTML(sentence,ctls){return `<div class="q">${sentence}</div>${ctls?`<div class="ctl"><span class="u">数をかえる</span>${ctls}</div>`:''}`;}
+function qHTML(sentence,ctls){return `<div class="q">${sentence}</div>${ctls?`<div class="ctl">${ctls}</div>`:''}`;}
 function chip(v,cls,lab,key){return `<span class="chip ${cls}" ${key?`onclick="hl('${key}')"`:''}>${v}<small>${lab||''}</small></span>`;}
 
 /* ---------- 数の ± ---------- */
@@ -488,7 +550,7 @@ function buildDeal(a,b,amari){
   for(let i=0;i<b;i++)drawPerson($('persons'),i,b,LMAIN,'p'+i);
   const key=amari?'5':'1';
   $('qcard').innerHTML=qHTML(jp(`クッキー<b class="c-cookie">${a}</b>こを|<b class="c-plate">${b}</b>人で|同じ数ずつ|分けます。<br>1人分は|何こ？`),
-    `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span>`);
+    `${numCtl('a',a,'c-cookie','こ')}${numCtl('b',b,'c-plate','人')}`);
   setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
   if(jibun())startShiki(amari?'amari':'deal');else setButtons([{text:'1こくばる',fn:dealOne,id:'dealBtn'}]);
 }
@@ -538,16 +600,21 @@ function finishDealUI(self){
   const {a,b,q,r,amari}=D;
   for(let i=0;i<b;i++)drawBubble(i,b,LMAIN,q+'こ',COL.amber);
   setButtons([]);
-  const sei=self?'せいかい！':'';
-  if(!amari||r===0){
-    setStatus(jp(`${sei}1人分は|<b class="c-cookie">${q}</b>こ！${amari?'|あまりはなし':''}`));
-    $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}</div><div class="read">${a}わる${b}は${q}</div>`;
-    setMsg(jp(amari?`ぴったり|分けられた！|あまりは0。`:(self?`しきの数を|おすと、|図のどこか|わかるよ。`:`このことを|<b>${a} ÷ ${b} = ${q}</b>と|かきます。<br>しきの数を|おすと、|図のどこか|わかるよ。`)));
-  }else{
-    setStatus(jp(`${sei}1人分は|<b class="c-cookie">${q}</b>こ、|<b class="c-cookie">${r}</b>こあまる！`));
-    $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}<span class="grp"><span class="amari">あまり</span>${chip(r,'c-cookie','あまり','rest')}</span></div><div class="read">${a}わる${b}は${q}あまり${r}</div>`;
-    setMsg(jp(`もう1こずつ|くばるには|${b}こいる。<br>${r}こでは|たりない。<br>だから、|あまり<b class="c-cookie">${r}</b>は|わる数<b class="c-plate">${b}</b>より|小さい。`));
+  setStatus(jp(self?'せいかい！':'できた！'));
+  const kept=self&&keepAns(amari&&r>0?[]:['1人分'],'c-cookie');
+  if(!kept){
+    $('eq').innerHTML=(!amari||r===0)
+      ?`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}</div>`
+      :`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(q,'c-cookie','1人分','perplate')}<span class="grp"><span class="amari">あまり</span>${chip(r,'c-cookie','あまり','rest')}</span></div>`;
   }
+  setRead((!amari||r===0)?`${a}わる${b}は${q}`:`${a}わる${b}は${q}あまり${r}`);
+  const ansLine=(!amari||r===0)
+    ?`1人分は|<b class="c-cookie">${q}</b>こ！${amari?'|あまりはなし。':''}`
+    :`1人分は|<b class="c-cookie">${q}</b>こ、|<b class="c-cookie">${r}</b>こあまる！`;
+  const why=(!amari||r===0)
+    ?(amari?`ぴったり|分けられた！`:(self?`しきの数を|おすと、|図のどこか|わかるよ。`:`このことを|<b>${a} ÷ ${b} = ${q}</b>と|かきます。`))
+    :`もう1こずつ|くばるには|${b}こいる。|${r}こでは|たりない。<br>だから、|あまり<b class="c-cookie">${r}</b>は|わる数<b class="c-plate">${b}</b>より|小さい。`;
+  setMsg(jp(ansLine+'<br>'+why));
   $('eq').hidden=false;markCleared();showNext(amari);updateBack();
 }
 
@@ -556,24 +623,24 @@ let G={a:12,k:3,n:4};
 function buildGroup(){
   const {a,k}=P[2];G={a,k,n:a/k};
   drawTray(a);makeCookies(a);
-  $('qcard').innerHTML=qHTML(jp(`クッキー<b class="c-cookie">${a}</b>こを|1人に|<b class="c-cookie">${k}</b>こずつ|分けます。<br>何人に|分けられる？`),
-    `<span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span><span class="sep"></span><span class="cg">${numCtl('k',k,'c-cookie')}<span class="u">こずつ</span></span>`);
+  $('qcard').innerHTML=qHTML(jp(`クッキー<b class="c-cookie">${a}</b>こを|1ふくろに|<b class="c-cookie">${k}</b>こずつ|入れます。<br>ふくろは|いくつできる？`),
+    `${numCtl('a',a,'c-cookie','こ')}${numCtl('k',k,'c-cookie','こずつ')}`);
   setStatus(`のこり<b class="c-cookie">${a}</b>こ`);
-  if(jibun())startShiki('group');else setButtons([{text:`${k}ことる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);
+  if(jibun())startShiki('group');else setButtons([{text:`${k}こいれる`,fn:takeGroup,cls:'blue',id:'takeBtn'}]);
 }
 function takeGroup(){
   if(S.done||S.busy||(jibun()&&J.phase==='shiki'))return;
   const tc=trayCookies();if(tc.length<G.k)return;
   const p=S.persons;S.persons++;S.busy=true;
-  drawPerson($('persons'),p,G.n,LMAIN,'p'+p);
-  if(!jibun())drawBubble(p,G.n,LMAIN,String(p+1),COL.plateT);   // じぶんで：人数は自分でかぞえる
+  drawBag($('persons'),p,G.n,LMAIN,'p'+p,G.k);
+  if(!jibun())bagBubble(p,G.n,LMAIN,String(p+1),COL.plateT,G.k);   // じぶんで：ふくろの数は自分でかぞえる
   let left=G.k;sfxDeal();
   for(let j=0;j<G.k;j++){
     const c=tc[j];c.where='p'+p;c.slot=j;c.el.setAttribute('data-fit-in','p'+p);
-    const to=plateSlot(p,G.n,j,G.k,LMAIN);
+    const to=bagSlot(p,G.n,j,G.k,LMAIN);
     later(()=>tween(c,to,420,()=>{if(--left===0){S.busy=false;sfxLand();afterGroup();}}),j*90);
   }
-  setStatus(jp(`のこり<b class="c-cookie">${trayCookies().length}</b>こ|／ <b class="c-plate">${S.persons}</b>人め`));
+  setStatus(jp(`のこり<b class="c-cookie">${trayCookies().length}</b>こ|／ <b class="c-plate">${S.persons}</b>ふくろめ`));
   updateBack();
 }
 function afterGroup(){
@@ -584,22 +651,33 @@ function afterGroup(){
 }
 function finishGroupUI(self){
   sfxDone();const {a,k,n}=G;
-  if(self){clear($('bubbles'));for(let i=0;i<n;i++)drawBubble(i,n,LMAIN,String(i+1),COL.plateT);}
-  setStatus(jp(`${self?'せいかい！|':''}<b class="c-plate">${n}</b>人に|分けられた！`));
-  $('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(k,'c-cookie','1人分','perplate')}<span class="op">=</span>${chip(n,'c-plate','人','persons')}</div><div class="read">${a}わる${k}は${n}</div>`;
+  if(self){clear($('bubbles'));for(let i=0;i<n;i++)bagBubble(i,n,LMAIN,String(i+1),COL.plateT,G.k);}
+  setStatus(jp(self?'せいかい！':'できた！'));
+  const kept=self&&keepAns(['ふくろの数'],'c-plate');
+  if(!kept)$('eq').innerHTML=`<div class="eqrow">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(k,'c-cookie','1ふくろ分','perplate')}<span class="op">=</span>${chip(n,'c-plate','ふくろ','persons')}</div>`;
+  setRead(`${a}わる${k}は${n}`);
   $('eq').hidden=false;
-  setMsg(jp(`これも|<b>${a} ÷ ${k} = ${n}</b>。<br>①と|同じしきなのに、|答えは「人」！`));
+  setMsg(jp(`<b class="c-plate">${n}</b>ふくろ|できた！<br>これも|<b>${a} ÷ ${k} = ${n}</b>。|①と|同じしきなのに、|答えは「ふくろ」！`));
   markCleared();showNext(false);updateBack();
 }
 
 /* ---------- ③ くらべる ---------- */
-const LTOP={faceY:80,plateY:262},LBOT={faceY:392,plateY:574};
+const LTOP={faceY:80,plateY:262},LBOT={faceY:392,plateY:574,bagCy:488,bagMaxH:256};
 let C={a:12,b:3,q:4};
 function staticScene(parent,people,each,L,tagPrefix){
   for(let i=0;i<people;i++){
     drawPerson(parent,i,people,L,tagPrefix+i);
     for(let j=0;j<each;j++){
       const t=plateSlot(i,people,j,each,L);
+      const e=el('g',{class:'ck','data-fit-in':tagPrefix+i,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},parent);drawCookie(e);
+    }
+  }
+}
+function staticBags(parent,bags,each,L,tagPrefix){
+  for(let i=0;i<bags;i++){
+    drawBag(parent,i,bags,L,tagPrefix+i,each);
+    for(let j=0;j<each;j++){
+      const t=bagSlot(i,bags,j,each,L);
       const e=el('g',{class:'ck','data-fit-in':tagPrefix+i,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},parent);drawCookie(e);
     }
   }
@@ -612,34 +690,34 @@ function buildCompare(){
   const t1=el('text',{x:24,y:36,'font-size':28,fill:COL.ink},top);
   el('tspan',{fill:COL.plateT},t1).textContent=`${b}人`;el('tspan',{},t1).textContent='で分ける';
   const t2=el('text',{x:24,y:350,'font-size':28,fill:COL.ink},bot);
-  el('tspan',{fill:COL.amber},t2).textContent=`${b}こ`;el('tspan',{},t2).textContent='ずつ分ける';
+  el('tspan',{fill:COL.amber},t2).textContent=`${b}こ`;el('tspan',{},t2).textContent='ずつふくろに入れる';
   staticScene(top,b,q,LTOP,'t');
-  staticScene(bot,q,b,LBOT,'u');
+  staticBags(bot,q,b,LBOT,'u');
   $('qcard').innerHTML=`どちらもしきは<b>${a} ÷ ${b} = ${q}</b>。<br>答えはどっち？`;
-  setStatus('図を見てえらぼう');
+  setStatus('図を見てえらぼう',1);
   setButtons([]);
   const ch=$('choices');ch.hidden=false;ch.innerHTML=
     `<div class="cmp" id="cmp0"><div class="cap"><b class="c-plate">${b}人</b>で分ける</div><div class="eqrow" id="cmpEq0">${chip(a,'','')}<span class="op">÷</span>${chip(b,'','')}<span class="op">=</span>${chip(q,'','')}</div><div class="pick"><button onclick="pick(0,'ko',this)">${q}こ</button><button onclick="pick(0,'nin',this)">${q}人</button></div></div>`+
-    `<div class="cmp" id="cmp1"><div class="cap"><b class="c-cookie">${b}こ</b>ずつ分ける</div><div class="eqrow" id="cmpEq1">${chip(a,'','')}<span class="op">÷</span>${chip(b,'','')}<span class="op">=</span>${chip(q,'','')}</div><div class="pick"><button onclick="pick(1,'ko',this)">${q}こ</button><button onclick="pick(1,'nin',this)">${q}人</button></div></div>`;
+    `<div class="cmp" id="cmp1"><div class="cap"><b class="c-cookie">${b}こ</b>ずつふくろに</div><div class="eqrow" id="cmpEq1">${chip(a,'','')}<span class="op">÷</span>${chip(b,'','')}<span class="op">=</span>${chip(q,'','')}</div><div class="pick"><button onclick="pick(1,'ko',this)">${q}こ</button><button onclick="pick(1,'fukuro',this)">${q}ふくろ</button></div></div>`;
 }
 function pick(row,v,btn){
   if(S.ans[row]!==null)return;
-  const right=row===0?'ko':'nin';
+  const right=row===0?'ko':'fukuro';
   if(v!==right){btn.classList.remove('miss');void btn.offsetWidth;btn.classList.add('miss');sfxWrong();
-    setMsg(jp(row===0?`図の上を|見て。<br>1人のおさらに|クッキーは|何こ？`:`図の下を|見て。<br>おさらは|いくつある？`),true);
-    pulseSel(row===0?'#cmpTop .ck[data-fit-in="t0"]':'#cmpBot .person');return;}
+    setMsg(jp(row===0?`図の上を|見て。<br>1人のおさらに|クッキーは|何こ？`:`図の下を|見て。<br>ふくろは|いくつある？`),true);
+    pulseSel(row===0?'#cmpTop .ck[data-fit-in="t0"]':'#cmpBot .bag');return;}
   S.ans[row]=v;btn.classList.add('hit');sfxLand();
   btn.parentElement.querySelectorAll('button').forEach(b=>{b.disabled=true;});
   const {a,b,q}=C,eq=$('cmpEq'+row);
   eq.innerHTML=row===0
     ?`${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,'c-plate','人')}<span class="op">=</span>${chip(q,'c-cookie','1人分')}`
-    :`${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,'c-cookie','1人分')}<span class="op">=</span>${chip(q,'c-plate','人')}`;
+    :`${chip(a,'c-cookie','クッキー')}<span class="op">÷</span>${chip(b,'c-cookie','1ふくろ分')}<span class="op">=</span>${chip(q,'c-plate','ふくろ')}`;
   setMsg('');
   if(S.ans[0]!==null&&S.ans[1]!==null){
     S.done=true;sfxDone();setStatus('せいかい！');
     setMsg(jp(`同じしきでも、|<b class="c-plate">${b}</b>と<b class="c-cookie">${b}</b>、|<b class="c-cookie">${q}</b>と<b class="c-plate">${q}</b>の|いみがちがう！`));
     markCleared();showNext(false);
-  }else setStatus('もうひとつもえらぼう');
+  }else setStatus('もうひとつもえらぼう',1);
   updateBack();
 }
 function pulseSel(sel){document.querySelectorAll(sel).forEach(e=>{e.classList.remove('pulse');void e.getBoundingClientRect();e.classList.add('pulse');setTimeout(()=>e.classList.remove('pulse'),1500);});}
@@ -655,8 +733,8 @@ function buildKake(){
     const e=el('g',{class:'ck dim','data-fit-in':'p'+i,'data-slot':j,transform:`translate(${t.x.toFixed(1)} ${t.y.toFixed(1)}) scale(${t.s.toFixed(3)})`},g);drawCookie(e);
   }
   $('qcard').innerHTML=qHTML(jp(`<b class="c-plate">${b}</b>人に|同じ数ずつ|分けたら、|ぜんぶで<b class="c-cookie">${a}</b>こ。<br>1人分は|何こ？`),
-    `<span class="cg">${numCtl('b',b,'c-plate')}<span class="u">人</span></span><span class="sep"></span><span class="cg">${numCtl('a',a,'c-cookie')}<span class="u">こ</span></span>`);
-  setStatus(jp(`<b class="c-plate">${b}</b>のだんを|おして|さがそう`));
+    `${numCtl('b',b,'c-plate','人')}${numCtl('a',a,'c-cookie','こ')}`);
+  setStatus(jp(`<b class="c-plate">${b}</b>のだんを|おして|さがそう`),1);
   setButtons([]);
   $('eq').innerHTML=`<div class="eqrow">${chip(b,'c-plate','人')}<span class="op">×</span>${chip('□','blank','1人分')}<span class="op">=</span>${chip(a,'c-cookie','ぜんぶ')}</div>`;
   $('eq').hidden=false;
@@ -674,9 +752,9 @@ function light(k,btn){
   $('eq').innerHTML=`<div class="eqrow">${chip(b,'c-plate','人')}<span class="op">×</span>${chip(k,'c-cookie','1人分')}<span class="op">=</span>${chip(tot,tot===a?'c-cookie':'blank','ぜんぶ')}</div>`;   // 12にならない間は うすい
   if(tot===a){
     S.done=true;btn.classList.add('hit');sfxDone();
-    setStatus(`<b class="c-plate">${b}</b> × <b class="c-cookie">${k}</b> = <b class="c-cookie">${a}</b>！`);
-    $('eq').innerHTML+=`<div class="eqrow" style="margin-top:8px">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(k,'c-cookie','1人分','perplate')}</div>`;
-    setMsg(jp(`${b} × ${k} = ${a}だから、|${a} ÷ ${b} = ${k}。<br>わり算の答えは|かけ算で|さがせる！`));
+    setStatus(jp('できた！'));
+    $('eq').innerHTML+=`<div class="eqrow eq2">${chip(a,'c-cookie','クッキー','cookies')}<span class="op">÷</span>${chip(b,'c-plate','人','persons')}<span class="op">=</span>${chip(k,'c-cookie','1人分','perplate')}</div>`;
+    setMsg(jp(`わり算の答えは|かけ算で|さがせる！`));
     markCleared();showNext(false);
   }else if(tot<a){setStatus(jp(`${b} × ${k} = ${tot}。|まだ${a}に|たりない`));setMsg('');}
   else{setStatus(jp(`${b} × ${k} = ${tot}。|${a}を|こえた`));setMsg('');}
@@ -687,7 +765,7 @@ function light(k,btn){
 function hl(key){
   const n=stageNum();
   if(key==='cookies')pulseSel('#cookies .ck:not(.dim)');
-  else if(key==='persons')pulseSel('#persons .person');
+  else if(key==='persons')pulseSel('#persons .person, #persons .bag');
   else if(key==='perplate')pulseSel('#cookies .ck[data-fit-in="p0"]:not(.dim)');
   else if(key==='rest')pulseSel('#cookies .ck[data-fit-in="tray"]');
   sfxLand();

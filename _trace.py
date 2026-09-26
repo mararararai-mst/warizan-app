@@ -30,7 +30,7 @@ STATES = [
  ('2 できた',        "goStage(1); takeGroup(); takeGroup(); takeGroup(); takeGroup()"),
  ('3 はじめ',        "goStage(2)"),
  ('3 まちがい',      "goStage(2); pick(0,'nin',document.querySelectorAll('#cmp0 .pick button')[1])"),
- ('3 できた',        "goStage(2); pick(0,'ko',document.querySelectorAll('#cmp0 .pick button')[0]); pick(1,'nin',document.querySelectorAll('#cmp1 .pick button')[1])"),
+ ('3 できた',        "goStage(2); pick(0,'ko',document.querySelectorAll('#cmp0 .pick button')[0]); pick(1,'fukuro',document.querySelectorAll('#cmp1 .pick button')[1])"),
  ('4 はじめ',        "goStage(3)"),
  ('4 3×2',           "goStage(3); light(2,document.querySelectorAll('#strip button')[1])"),
  ('4 できた',        "goStage(3); light(4,document.querySelectorAll('#strip button')[3])"),
@@ -46,7 +46,7 @@ STATES = [
  ('1 じぶん こたえ',  "setMode('jibun'); goStage(0); putTile(12); putTile(3); dealAll()"),
  ('1 じぶん できた',  "setMode('jibun'); goStage(0); putTile(12); putTile(3); dealAll(); putAns(4); putUnit('こ')"),
  ('2 じぶん こたえ',  "setMode('jibun'); goStage(1); putTile(12); putTile(3); for(let i=0;i<4;i++)takeGroup()"),
- ('2 じぶん できた',  "setMode('jibun'); goStage(1); putTile(12); putTile(3); for(let i=0;i<4;i++)takeGroup(); putAns(4); putUnit('人')"),
+ ('2 じぶん できた',  "setMode('jibun'); goStage(1); putTile(12); putTile(3); for(let i=0;i<4;i++)takeGroup(); putAns(4); putUnit('ふくろ')"),
  ('5 じぶん こたえ',  "setMode('jibun'); goStage(4); putTile(14); putTile(3); dealAll()"),
  ('5 じぶん できた',  "setMode('jibun'); goStage(4); putTile(14); putTile(3); dealAll(); putAns(4); putAns(2); setMode('mite')"),
 ]
@@ -87,12 +87,12 @@ def trace(pg):
     E("P[1].a=12; P[1].b=3; goStage(0)")
     # ---------- ② ○こずつ ----------
     E("goStage(1)")
-    check(E("document.querySelectorAll('#persons .person').length") == 0, '② はじめは 人がいない')
+    check(E("document.querySelectorAll('#persons .person, #persons .bag').length") == 0, '② はじめは ふくろが無い')
     E("goBack()"); check(E("S.stage") == 0, '② 進みなしの もどる＝①へ')
     E("goStage(1); takeGroup()")
-    check(E("S.persons") == 1 and E("document.querySelectorAll('#cookies .ck[data-fit-in=p0]').length") == 3, '② 3こ とる → 1人め 3こ')
+    check(E("S.persons") == 1 and E("document.querySelectorAll('#persons .bag').length") == 1 and E("document.querySelectorAll('#cookies .ck[data-fit-in=p0]').length") == 3, '② 3こいれる → 1ふくろめに 3こ')
     E("takeGroup(); takeGroup(); takeGroup()")
-    check(E("S.done") and E("S.persons") == 4, '② 4人で できた')
+    check(E("S.done") and E("S.persons") == 4 and E("document.querySelectorAll('#persons .bag').length") == 4, '② 4ふくろで できた')
     check(E("document.querySelector('#eq .chip:nth-child(3)').classList.contains('c-cookie')") and E("document.querySelector('#eq .chip:nth-child(5)').classList.contains('c-plate')"), '② 3=だいだい 4=あお（①と入れかわる）')
     before = E("document.body.innerHTML.length"); E("takeGroup()"); check(E("document.body.innerHTML.length") == before, '② できた後の連打で変わらない')
     E("adjust('k',1)"); check(E("P[2].k") == 4 and E("P[2].a") == 16, '② k＋ → 4こずつ 16こ（人数4は そのまま）')
@@ -101,7 +101,7 @@ def trace(pg):
     E("P[2].a=12; P[2].k=3; goStage(1)")
     # ---------- ③ くらべる ----------
     E("goStage(2)")
-    check(E("document.querySelectorAll('#cmpTop .person').length") == 3 and E("document.querySelectorAll('#cmpBot .person').length") == 4, '③ 上3人・下4人')
+    check(E("document.querySelectorAll('#cmpTop .person').length") == 3 and E("document.querySelectorAll('#cmpBot .bag').length") == 4, '③ 上は人3・下はふくろ4')
     check(E("document.querySelectorAll('#cmpTop .ck').length") == 12 and E("document.querySelectorAll('#cmpBot .ck').length") == 12, '③ どちらも 12こ')
     E("pick(0,'nin',document.querySelectorAll('#cmp0 .pick button')[1])")
     check(E("S.ans[0]") is None and E("document.getElementById('msg').classList.contains('warn')"), '③ まちがい → ヒント（赤）')
@@ -109,21 +109,22 @@ def trace(pg):
     check(E("S.ans[0]") == 'ko' and E("document.querySelector('#cmpEq0 .chip:nth-child(5)').classList.contains('c-cookie')"), '③ 上：4こ が正解 → 4がだいだい')
     E("pick(0,'nin',document.querySelectorAll('#cmp0 .pick button')[1])"); check(E("S.ans[0]") == 'ko', '③ 答えたあとは変えられない')
     E("pick(1,'ko',document.querySelectorAll('#cmp1 .pick button')[0])"); check(E("S.ans[1]") is None, '③ 下：4こ は まちがい')
-    E("pick(1,'nin',document.querySelectorAll('#cmp1 .pick button')[1])")
-    check(E("S.done") and E("document.querySelector('#cmpEq1 .chip:nth-child(5)').classList.contains('c-plate')"), '③ 下：4人 が正解 → 4があお')
+    check(E("document.querySelectorAll('#cmpBot .bag').length") == 4 and E("document.querySelectorAll('#cmpTop .person').length") == 3, '③ 上は人3・下はふくろ4（絵が別物）')
+    E("pick(1,'fukuro',document.querySelectorAll('#cmp1 .pick button')[1])")
+    check(E("S.done") and E("document.querySelector('#cmpEq1 .chip:nth-child(5)').classList.contains('c-plate')"), '③ 下：4ふくろ が正解 → 4があお')
     check(E("!document.getElementById('nextrow').hidden"), '③ つぎへ が出る')
     # ---------- ④ かけ算 ----------
     E("goStage(3)")
     check(E("document.querySelectorAll('#strip button').length") == 9 and E("document.querySelectorAll('#strip button')[0].textContent") == '3×1=3', '④ 3のだん 9マス')
     check(E("document.querySelectorAll('#cookies .ck.dim').length") == 12, '④ はじめは 全部うすい')
     E("light(2,document.querySelectorAll('#strip button')[1])")
-    check(E("document.querySelectorAll('#cookies .ck:not(.dim)').length") == 6 and 'たりない' in E("document.getElementById('status').innerText"), '④ 3×2 → 6こ 点く・たりない')
+    check(E("document.querySelectorAll('#cookies .ck:not(.dim)').length") == 6 and 'たりない' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"), '④ 3×2 → 6こ 点く・たりない')
     E("light(5,document.querySelectorAll('#strip button')[4])")
-    check('こえた' in E("document.getElementById('status').innerText"), '④ 3×5 → こえた')
+    check('こえた' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"), '④ 3×5 → こえた')
     E("light(4,document.querySelectorAll('#strip button')[3])")
     check(E("S.done") and E("document.querySelectorAll('#strip button')[3].classList.contains('hit')"), '④ 3×4=12 で できた')
     check('÷' in E("document.getElementById('eq').innerText"), '④ わり算の しきも出る')
-    st = E("document.getElementById('status').innerText"); E("light(6,document.querySelectorAll('#strip button')[5])"); check(E("document.getElementById('status').innerText") == st, '④ できた後は 変わらない')
+    st = E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"); E("light(6,document.querySelectorAll('#strip button')[5])"); check(E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)") == st, '④ できた後は 変わらない')
     E("P[1].b=4; P[1].a=20; goStage(3)"); check(E("document.querySelectorAll('#strip button')[0].textContent") == '4×1=4' and E("document.querySelectorAll('#cookies .ck').length") == 20, '④ 数を変えると だんも変わる')
     E("P[1].a=12; P[1].b=3")
     # ---------- ⑤ あまり ----------
@@ -132,15 +133,15 @@ def trace(pg):
     E("dealAll()")
     check(E("S.done") and not E("S.failed"), '⑤ できた')
     check(E("[0,1,2].map(i=>document.querySelectorAll('#cookies .ck[data-fit-in=p'+i+']').length).join()") == '4,4,4' and E("document.querySelectorAll('#cookies .ck[data-fit-in=tray]').length") == 2, '⑤ 4こずつ＋おぼんに 2こ もどる')
-    check('あまり' in E("document.getElementById('eq').innerText") and '2' in E("document.getElementById('status').innerText"), '⑤ しきに あまり2')
+    check('あまり' in E("document.getElementById('eq').innerText") and '2' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"), '⑤ しきに あまり2')
     check(E("document.querySelectorAll('#eq .chip').length") == 4, '⑤ チップ4つ（あまり つき）')
     check(E("document.getElementById('nextBtn').textContent").startswith('さいしょから'), '⑤ 最後は「さいしょから」')
     E("P[5].a=12; goStage(4); dealAll()")
-    check(E("S.done") and 'あまりはなし' in E("document.getElementById('status').innerText") and E("document.querySelectorAll('#eq .chip').length") == 3, '⑤ 12こなら あまりなし')
+    check(E("S.done") and 'あまりはなし' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)") and E("document.querySelectorAll('#eq .chip').length") == 3, '⑤ 12こなら あまりなし')
     E("P[5].a=20; P[5].b=2; goStage(4); dealAll()")
     check(E("[0,1].map(i=>document.querySelectorAll('#cookies .ck[data-fit-in=p'+i+']').length).join()") == '10,10', '⑤ 20こ2人 → 10こずつ（2だん）')
     E("P[5].a=6; P[5].b=5; goStage(4); dealAll()")
-    check('1' in E("document.getElementById('status').innerText") and E("document.querySelectorAll('#cookies .ck[data-fit-in=tray]').length") == 1, '⑤ 6こ5人 → 1こずつ あまり1')
+    check('1' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)") and E("document.querySelectorAll('#cookies .ck[data-fit-in=tray]').length") == 1, '⑤ 6こ5人 → 1こずつ あまり1')
     E("adjust('a',-1)"); check(E("P[5].a") == 6, '⑤ a は 6 で止まる')
     E("adjust('a',1); adjust('b',1)"); check(E("P[5].a") == 7 and E("P[5].b") == 5, '⑤ ±が効く・bは5で止まる')
     E("P[5].a=14; P[5].b=3; goStage(4)")
@@ -170,27 +171,33 @@ def trace(pg):
     E("putAns(3); putUnit('こ')"); check('かぞえて' in E("document.getElementById('msg').innerText") and E("J.ans[0]") is None, 'じ① 3こ → かぞえてのヒント・もどる')
     E("putAns(4); putUnit('人')"); check('「こ」' in E("document.getElementById('msg').innerText"), 'じ① 4人 → 単位のヒント')
     E("putAns(4); putUnit('こ')")
-    check(E("J.phase") == 'done' and E("document.querySelectorAll('#bubbles .bubble').length") == 3 and 'せいかい' in E("document.getElementById('status').innerText"), 'じ① 4こ → せいかい・ふきだし3つ')
+    check(E("J.phase") == 'done' and E("document.querySelectorAll('#bubbles .bubble').length") == 3 and 'せいかい' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"), 'じ① 4こ → せいかい・ふきだし3つ')
+    # 情報の連続性：入れた「4」と「こ」がそのまま残る（作り直して消さない）
+    chips = E("[...document.querySelectorAll('#bRow .chip')].map(e=>e.firstChild.nodeValue.trim()).join()")
+    check(chips == '12,3,4,こ', 'じ① 入れた 4 と こ が残る', chips)
+    check(E("document.querySelectorAll('#eq .tiles').length") == 0, 'じ① キーパッドは消える')
     check(E("document.querySelector('#eq .chip:nth-child(5)').classList.contains('c-cookie')") and E("!document.getElementById('nextrow').hidden"), 'じ① しきカード（4＝だいだい）・つぎへ')
     # ②
-    E("goStage(1)"); check(E("document.querySelectorAll('#eq .tiles .tile').length") == 4 and E("!document.getElementById('takeBtn')"), 'じ② タイル4つ・とるボタンなし')
+    E("goStage(1)"); check(E("document.querySelectorAll('#eq .tiles .tile').length") == 4 and E("!document.getElementById('takeBtn')"), 'じ② タイル4つ・いれるボタンなし')
     E("takeGroup()"); check(E("S.persons") == 0, 'じ② しきの前は とれない')
     E("putTile(12); putTile(4)"); check('こずつだから' in E("document.getElementById('msg').innerText"), 'じ② 12÷4 → こずつのヒント')
+    check(E("document.getElementById('msg').innerText").startswith('1ふくろ'), 'じ② ヒントが「1ふくろ3こずつ」')
     E("putTile(12); putTile(3); for(let i=0;i<4;i++)takeGroup()")
     check(E("S.done") and E("J.phase") == 'kotae' and E("document.querySelectorAll('#bubbles .bubble').length") == 0, 'じ② 4人 → 答え入力（番号ふきだしなし）')
-    E("putAns(4); putUnit('こ')"); check('「人」' in E("document.getElementById('msg').innerText"), 'じ② 4こ → 単位のヒント')
-    E("putAns(3); putUnit('人')"); check('人をかぞえて' in E("document.getElementById('msg').innerText"), 'じ② 3人 → かぞえてのヒント')
-    E("putAns(4); putUnit('人')")
-    check(E("J.phase") == 'done' and E("document.querySelectorAll('#bubbles .bubble').length") == 4 and E("document.querySelector('#eq .chip:nth-child(5)').classList.contains('c-plate')"), 'じ② 4人 → せいかい・番号ふきだし4つ・4があお')
+    check(E("document.querySelectorAll('#eq .units .tile')[1].textContent") == 'ふくろ', 'じ② 単位は こ／ふくろ')
+    E("putAns(4); putUnit('こ')"); check('「ふくろ」' in E("document.getElementById('msg').innerText"), 'じ② 4こ → 単位のヒント')
+    E("putAns(3); putUnit('ふくろ')"); check('ふくろをかぞえて' in E("document.getElementById('msg').innerText"), 'じ② 3ふくろ → かぞえてのヒント')
+    E("putAns(4); putUnit('ふくろ')")
+    check(E("J.phase") == 'done' and E("document.querySelectorAll('#bubbles .bubble').length") == 4 and E("document.querySelector('#eq .chip:nth-child(5)').classList.contains('c-plate')"), 'じ② 4ふくろ → せいかい・番号ふきだし4つ・4があお')
     # ⑤
     E("goStage(4); putTile(14); putTile(3); dealAll()")
     check(E("S.done") and E("J.phase") == 'kotae' and E("document.querySelectorAll('#bRow .slot.ans').length") == 2 and E("document.querySelectorAll('#eq .units').length") == 0, 'じ⑤ 答え欄2つ（あまり）・単位なし')
     E("putAns(4); putAns(1)"); check('おぼん' in E("document.getElementById('msg').innerText") and E("J.ans.join()") == ',', 'じ⑤ あまり1 → おぼんのヒント')
     E("putAns(5); putAns(2)"); check('おさら' in E("document.getElementById('msg').innerText"), 'じ⑤ 5こ → おさらのヒント')
     E("putAns(4); putAns(2)")
-    check(E("J.phase") == 'done' and 'あまる' in E("document.getElementById('status').innerText") and E("document.querySelectorAll('#eq .chip').length") == 4, 'じ⑤ 4あまり2 → せいかい・チップ4つ')
+    check(E("J.phase") == 'done' and 'あまる' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)") and E("document.querySelectorAll('#eq .chip').length") == 4, 'じ⑤ 4あまり2 → せいかい・チップ4つ')
     E("P[5].a=12; goStage(4); putTile(12); putTile(3); dealAll(); putAns(4); putAns(0)")
-    check(E("J.phase") == 'done' and 'あまりはなし' in E("document.getElementById('status').innerText"), 'じ⑤ 12こ → あまり0で せいかい')
+    check(E("J.phase") == 'done' and 'あまりはなし' in E("(document.getElementById('status').innerText+' '+document.getElementById('msg').innerText)"), 'じ⑤ 12こ → あまり0で せいかい')
     E("P[5].a=14")
     # ③④は もともと自分で答える → 同じ
     E("goStage(2)"); check(E("document.querySelectorAll('#cmp0 .pick button').length") == 2, 'じ③ 2択のまま')
@@ -257,6 +264,9 @@ def wrapcheck(browser):
         pg = ctx.new_page(); pg.goto(URL); pg.wait_for_selector('#band button')
         for name, js in STATES:
             run_state(pg, js)
+            tops = pg.evaluate("[...document.querySelectorAll('.qcard .ctl .numctl')].map(e=>Math.round(e.getBoundingClientRect().top))")
+            if len(set(tops)) > 1:
+                bad.append(f'{w}px {name} 数をかえるが2行: {tops}')
             for it in pg.evaluate(LINES_JS):
                 ls = it['lines']
                 for i in range(len(ls) - 1):

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>わり算アプリ 動きくらべ｜案A〜D</title>
+<style>
+  :root{
+    --ink:#4a3f3a; --ink-l:#8a7c76; --paper:#fffaf3;
+    --font-head:"Zen Maru Gothic","Rounded Mplus 1c","Hiragino Maru Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-head);color:var(--ink);font-weight:700;background:#FFF7EA;padding:14px 16px 28px}
+  h1{font-size:20px;margin-bottom:2px}
+  p.lead{font-size:14px;color:var(--ink-l);margin-bottom:12px;font-weight:700}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;position:sticky;top:0;background:#FFF7EA;padding:8px 0;z-index:5}
+  .bar button{font-family:inherit;font-weight:700;color:#fff;background:#c9651a;border:none;border-radius:14px;
+    padding:11px 22px;font-size:17px;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15)}
+  .bar button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.15)}
+  .bar button.sub{background:#fff;color:var(--ink)}
+  .bar .note{font-size:13px;color:var(--ink-l)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (min-width:1700px){ .grid{grid-template-columns:repeat(4,1fr)} }
+  @media (max-width:760px){ .grid{grid-template-columns:1fr} }
+  .panel{background:#fff;border-radius:18px;padding:10px 10px 6px}
+  .panel h2{font-size:17px;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .panel h2 .tag{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+    border-radius:50%;background:var(--ink);color:#fff;font-size:16px}
+  .panel h2 button{margin-left:auto;font-family:inherit;font-weight:700;font-size:13px;color:var(--ink);
+    background:var(--paper);border:none;border-radius:11px;padding:7px 13px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.10)}
+  svg{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+
+<h1>わり算アプリ　動きくらべ</h1>
+<p class="lead">12こを3人に くばる ところ。図・色・音は4つとも同じ。ちがうのは <b>動き</b> だけ。</p>
+
+<div class="bar">
+  <button onclick="runAll()">4つ いっせいに くばる</button>
+  <button class="sub" onclick="resetAll()">はじめに もどす</button>
+  <span class="note">音は4つとも切っています（動きだけを見るため）</span>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+/* ===== わり算アプリ本体(index.html)から図と動きをそのまま写したもの ===== */
+const NS='http://www.w3.org/2000/svg';
+const COL={cookie:'#f0a850',cookieD:'#c9772a',choc:'#6b3e22',plate:'#3b9fe0',plateL:'#bfe6ff',
+           tray:'#f3dcb8',trayD:'#d3a86f',skin:'#ffe0c2',skinD:'#d9a37a',ink:'#4a3f3a'};
+const HAIR=['#5a3a2a','#e0b34a','#8a5a3a'];
+const SHIRT=['#ffd1e3','#bfe6ff','#cdeeb6'];
+const LMAIN={faceY:318,plateY:540}, TRAY={x:60,y:20,w:880,h:180};
+const A=12, B=3, Q=A/B;
+
+function el(t,at,p){const e=document.createElementNS(NS,t);for(const k in at)e.setAttribute(k,at[k]);p&&p.appendChild(e);return e;}
+function drawCookie(g){
+  const inn=el('g',{class:'in'},g);
+  el('circle',{cx:0,cy:0,r:30,fill:COL.cookie,stroke:COL.cookieD,'stroke-width':3},inn);
+  [[-11,-8],[9,-12],[-4,10],[13,7],[-16,9]].forEach(p=>el('circle',{cx:p[0],cy:p[1],r:4.2,fill:COL.choc},inn));
+  return inn;
+}
+function drawTray(g){
+  el('rect',{x:TRAY.x,y:TRAY.y,width:TRAY.w,height:TRAY.h,rx:26,fill:COL.tray,stroke:COL.trayD,'stroke-width':5},g);
+  el('rect',{x:TRAY.x+18,y:TRAY.y+16,width:TRAY.w-36,height:TRAY.h-32,rx:18,fill:'none',stroke:'#fff','stroke-width':3,opacity:.7},g);
+}
+function traySlot(i,n){
+  const cols=Math.min(n,10),rows=Math.ceil(n/cols),cell=84,rowH=76;
+  const row=Math.floor(i/cols),col=i%cols,rowN=(row<rows-1)?cols:n-(rows-1)*cols;
+  return {x:TRAY.x+TRAY.w/2-(rowN-1)*cell/2+col*cell, y:TRAY.y+TRAY.h/2-(rows-1)*rowH/2+row*rowH, s:.9};
+}
+function personGeom(idx,n,L){
+  const gap=900/n,cx=50+gap*(idx+.5),pw=Math.min(250,gap-16);
+  return {cx,pw,cell:pw/5,faceY:L.faceY,plateY:L.plateY};
+}
+function plateSlot(idx,n,slot,q,L){
+  const g=personGeom(idx,n,L), row=slot<5?0:1, col=slot%5;
+  const rowN=row===0?Math.min(Math.max(q,slot+1),5):Math.max(q-5,slot-4);
+  return {x:g.cx-(rowN-1)*g.cell/2+col*g.cell, y:g.plateY-24-row*g.cell*.85, s:(g.cell*.42)/30};
+}
+function drawPerson(parent,idx,n,L){
+  const g=personGeom(idx,n,L);
+  const inn=el('g',{class:'in'},el('g',{class:'person'},parent));
+  el('rect',{x:g.cx-34,y:g.faceY+24,width:68,height:42,rx:16,fill:SHIRT[idx%3]},inn);
+  el('circle',{cx:g.cx,cy:g.faceY,r:28,fill:COL.skin,stroke:COL.skinD,'stroke-width':2.5},inn);
+  el('path',{d:`M${g.cx-28},${g.faceY-4} a28,28 0 0 1 56,0 a32,17 0 0 0 -56,0z`,fill:HAIR[idx%3]},inn);
+  el('circle',{cx:g.cx-10,cy:g.faceY+2,r:3.2,fill:COL.ink},inn);
+  el('circle',{cx:g.cx+10,cy:g.faceY+2,r:3.2,fill:COL.ink},inn);
+  el('path',{d:`M${g.cx-9},${g.faceY+11} q9,8 18,0`,fill:'none',stroke:COL.ink,'stroke-width':2.5,'stroke-linecap':'round'},inn);
+  el('ellipse',{cx:g.cx,cy:g.plateY,rx:g.pw/2,ry:30,fill:'#fff',stroke:COL.plate,'stroke-width':5},inn);
+  el('ellipse',{cx:g.cx,cy:g.plateY,rx:g.pw/2*.72,ry:18,fill:'none',stroke:COL.plateL,'stroke-width':3},inn);
+}
+
+/* ===== 1パネル＝1つの案 ===== */
+const VARIANTS=['A','B','C','D'];
+const panels={};
+
+function buildPanel(key){
+  const wrap=document.createElement('div');
+  wrap.className='panel';
+  wrap.innerHTML=`<h2><span class="tag">${key}</span>案${key}<button onclick="run('${key}')">この案だけ もう一度</button></h2>`;
+  const svg=el('svg',{viewBox:'0 0 1000 620'});
+  wrap.appendChild(svg);
+  document.getElementById('grid').appendChild(wrap);
+
+  const gTray=el('g',{},svg); drawTray(gTray);
+  const gPersons=el('g',{},svg);
+  for(let i=0;i<B;i++) drawPerson(gPersons,i,B,LMAIN);
+  const gCookies=el('g',{},svg);
+
+  const cookies=[];
+  for(let i=0;i<A;i++){
+    const g=el('g',{class:'ck'},gCookies);
+    drawCookie(g);
+    const t=traySlot(i,A);
+    cookies.push({el:g,i,x:t.x,y:t.y,s:t.s,r:0});
+  }
+  panels[key]={svg,cookies,anims:[],raf:0,dealt:0,busy:false};
+  applyAll(key);
+}
+function applyCk(c){
+  c.el.setAttribute('transform',
+    `translate(${c.x.toFixed(1)} ${c.y.toFixed(1)}) rotate(${(c.r||0).toFixed(1)}) scale(${c.s.toFixed(3)})`);
+}
+function applyAll(key){ panels[key].cookies.forEach(applyCk); }
+
+/* 本体と同じ tween（ease-in-out + 放物線70） + 案ごとの上乗せ */
+function tween(P,c,to,dur,opt,cb){
+  P.anims.push({c,from:{x:c.x,y:c.y,s:c.s,r:c.r||0},to,t0:null,dur,opt:opt||{},cb});
+  if(!P.raf)P.raf=requestAnimationFrame(ts=>loop(P,ts));
+}
+function loop(P,ts){
+  P.raf=0;
+  for(const a of P.anims.slice()){
+    if(a.t0==null)a.t0=ts;
+    const p=Math.min(1,(ts-a.t0)/a.dur);
+    const e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;            // 本体と同じイージング
+    const arc=a.opt.arc===undefined?70:a.opt.arc;
+    a.c.x=a.from.x+(a.to.x-a.from.x)*e;
+    a.c.y=a.from.y+(a.to.y-a.from.y)*e-Math.sin(p*Math.PI)*arc;
+    a.c.s=a.from.s+(a.to.s-a.from.s)*e;
+    if(a.opt.spin) a.c.r=a.from.r+a.opt.spin*e;            // 案C：飛んでいるあいだ回る
+    else if(a.to.r!==undefined) a.c.r=a.from.r+(a.to.r-a.from.r)*e;
+    applyCk(a.c);
+    if(p>=1){P.anims.splice(P.anims.indexOf(a),1);a.cb&&a.cb();}
+  }
+  if(P.anims.length)P.raf=requestAnimationFrame(t=>loop(P,t));
+}
+/* 案B：着地したあと 小さく2回はずむ */
+function bounce(P,c,groundY){
+  const hops=[[16,150],[6,110]];
+  let k=0;
+  const hop=()=>{
+    if(k>=hops.length)return;
+    const [h,d]=hops[k++];
+    tween(P,c,{x:c.x,y:groundY,s:c.s},d,{arc:h},hop);
+  };
+  hop();
+}
+
+function dealOne(key){
+  const P=panels[key];
+  if(P.dealt>=A)return;
+  const c=P.cookies[P.dealt], p=P.dealt%B, slot=Math.floor(P.dealt/B);
+  P.dealt++;
+  const to=plateSlot(p,B,slot,Q,LMAIN);
+
+  if(key==='D'){                                   // 案D：きっちり並べず 少し重ねて かたむける
+    const g=personGeom(p,B,LMAIN);
+    to.x=g.cx-(Q-1)*(g.cell*.78)/2+slot*(g.cell*.78)+(slot%2?3:-3);
+    to.y=to.y+(slot%2?2:-1);
+    to.r=[-9,6,-4,8][slot%4];
+  }
+  const opt = key==='C' ? {spin:360} : {};
+  tween(P,c,to,420,opt,()=>{
+    if(key==='B') bounce(P,c,to.y);
+  });
+}
+function run(key){
+  const P=panels[key];
+  if(P.busy)return;
+  resetOne(key); P.busy=true;
+  const step=()=>{
+    if(P.dealt>=A){ setTimeout(()=>P.busy=false,700); return; }
+    dealOne(key); setTimeout(step,140);            // 本体と同じ140msずらし
+  };
+  step();
+}
+function resetOne(key){
+  const P=panels[key];
+  P.anims.length=0; if(P.raf)cancelAnimationFrame(P.raf); P.raf=0;
+  P.dealt=0; P.busy=false;
+  P.cookies.forEach((c,i)=>{const t=traySlot(i,A);c.x=t.x;c.y=t.y;c.s=t.s;c.r=0;});
+  applyAll(key);
+}
+function runAll(){ VARIANTS.forEach(run); }
+function resetAll(){ VARIANTS.forEach(resetOne); }
+
+VARIANTS.forEach(buildPanel);
+</script>
+</body>
+</html>
